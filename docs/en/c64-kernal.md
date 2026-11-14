@@ -41,6 +41,8 @@ The routines are taken instruction-identically from the JiffyDOS sd2iec kernal
 (`../C64JiffySD2IEC`). `tools/vergleich_jiffy.py` checks this, along with the
 page boundaries in the time-critical sections.
 
+**Tested with S-JiffyDOS 1541:** The kernal has also been tested with S-JiffyDOS 1541 (SJD41). S-JiffyDOS 1541 by Jochen Adler is an extension of the JiffyDOS ROM for the 1541. Towards the computer it uses the transfer routines of JiffyDOS; the kernal therefore addresses it like a JiffyDOS drive (display `LOADING JF:`). Inside the drive it additionally speeds up loading, saving, scratching and validating and adds 40 tracks, file protection and an extended status. Further information: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
+
 | Routine | Address | Purpose |
 |---|---|---|
 | bit loop | $ED62 | serial send with a call to `jd_detect` |

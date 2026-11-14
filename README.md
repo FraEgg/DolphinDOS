@@ -12,14 +12,19 @@
 | C64 Ultimate / DolphinDOS 2 hardware manual | [PDF](manuals/en/DolphinDos26UL_Manual.pdf) | [PDF](manuals/de/DolphinDos26UL_Handbuch.pdf) |
 | JiffyDOS manual (JiffyDOS 6.01, new edition) | [PDF](manuals/en/JiffyDOS_Manual.pdf) | [PDF](manuals/de/JiffyDOS_Handbuch.pdf) |
 | 1571 Multi-Speeder V3 manual (C128DCR: hardware, build, BOM) | [PDF](manuals/en/MultiSpeederC128DCR-1571_Manual.pdf) | [PDF](manuals/de/MultiSpeederC128DCR-1571_Handbuch.pdf) |
+| 1571 Multi-Speeder V3 manual (external 1571: hardware, parallel cable, build, BOM) | [PDF](manuals/en/MultiSpeeder1571_Manual.pdf) | [PDF](manuals/de/MultiSpeeder1571_Handbuch.pdf) |
+| 1541 Multi-Speeder V3 manual (1541 and 1541-II: hardware, parallel cable, build, BOM) | [PDF](manuals/en/MultiSpeeder1541_Manual.pdf) | [PDF](manuals/de/MultiSpeeder1541_Handbuch.pdf) |
 | Technical notes | [docs/en](docs/en) | [docs/de](docs/de) |
 
 **Hardware projects / Hardware-Projekte:**
 
 | Project / Projekt | Repository |
 |---|---|
-| Switchless 8x Multi-Floppy-Speeder for the 1541 / für die 1541 | [github.com/FraEgg/commodore-1541-switchless-floppydrive-8x-multi-floppy-speeder](https://github.com/FraEgg/commodore-1541-switchless-floppydrive-8x-multi-floppy-speeder) |
+| Multi-Speeder project (entry page) / Multi-Speeder-Projekt (Einstieg) | [github.com/FraEgg/Switchless-Multi-Speeder-Project](https://github.com/FraEgg/Switchless-Multi-Speeder-Project) |
+| SpeedDos26 (sub-project / Unterprojekt): kernals and drive firmware for the SpeedDOS parallel cable | [github.com/FraEgg/SpeedDOS](https://github.com/FraEgg/SpeedDOS) |
+| Switchless 8x Multi-Floppy-Speeder V3 for the 1541 / für die 1541 | [github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1541](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1541) |
 | Switchless 8x Multi-Floppy-Speeder V3 for the C128DCR (1571) / für den C128DCR (1571) | [github.com/FraEgg/Switchless-Multi-Speeder-Commodore-C128DCR-1571](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-C128DCR-1571) |
+| Switchless 8x Multi-Floppy-Speeder V3 for the external 1571 / für die externe 1571 | [github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) |
 
 > **Status:** The C64 kernal, also as C64 II ROM, the DolphinDos26 and DolphinDos26DD2 firmware for the 1541 Multi-Speeder and MS-FASTCOPY run on real hardware. Reports from real hardware are very welcome.
 
@@ -40,7 +45,7 @@ The project consists of seven parts:
 | **DolphinDos26DD2** | All functions of DolphinDos26, but with the parallel cable on VIA1 like DolphinDos26UL | 1541 with Switchless Multi-Speeder V3 |
 | **C64DolphinDos26** | C64 kernal that combines DolphinDOS parallel, JiffyDOS and standard serial | C64, C64 II, and C128 in C64 mode |
 | **C128DolphinDos26** | C128 kernal with the same protocols, an `@` wedge and the function keys of the C64 kernal | C128 in C128 mode |
-| **C1571DolphinDos26** | Drive firmware for the 1571 with all DolphinDos26 functions and double-sided disks | 1571 of the C128DCR with 1571 Multi-Speeder V3 |
+| **C1571DolphinDos26** | Drive firmware for the 1571 with all DolphinDos26 functions and double-sided disks | 1571 with 1571 Multi-Speeder V3 (external 1571 and C128DCR) |
 | **MS-Tools** | C64 programs for testing and copying | C64 mode, with the firmware above |
 
 <p align="center"><img src="assets/01_startbild.png" alt="Boot screen of the DolphinDos26 kernal" width="480"></p>
@@ -49,11 +54,12 @@ The project consists of seven parts:
 
 | Your hardware | Drive ROM | C64 kernal | Manual |
 |---|---|---|---|
-| **1541 with Switchless Multi-Speeder V3** (512 KB, 6821 PIA) | [`1541DolphinDos26.bin`](rom/1541DolphinDos26.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [Manual](manuals/en/DolphinDos26_Manual.pdf) |
+| **1541 with Switchless Multi-Speeder V3** (512 KB, 6821 PIA) | [`1541DolphinDos26.bin`](rom/1541DolphinDos26.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [Manual](manuals/en/DolphinDos26_Manual.pdf); [1541 manual](manuals/en/MultiSpeeder1541_Manual.pdf); hardware and EPROM template: [repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1541) |
 | **Commodore 64 Ultimate** (emulated drive) | [`C1541_DOLPHINDOS26UL.bin`](rom/C1541_DOLPHINDOS26UL.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [UL manual](manuals/en/DolphinDos26UL_Manual.pdf) |
 | **Real 1541 with DolphinDOS 2 hardware** (VIA1 cable, 8 KB RAM) | [`C1541_DOLPHINDOS26UL.bin`](rom/C1541_DOLPHINDOS26UL.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [UL manual](manuals/en/DolphinDos26UL_Manual.pdf) |
 | **1541 with Switchless Multi-Speeder V3 and SpeedDOS-style cable** (512 KB, VIA1 cable) | [`C1541_DOLPHINDOS26DD2.bin`](rom/C1541_DOLPHINDOS26DD2.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [Manual](manuals/en/DolphinDos26_Manual.pdf), chapter 8; differences in the [firmware notes](docs/en/firmware-source-notes.md#dolphindos26dd2-multi-speeder-v3-with-speeddos-parallel-cable) |
 | **C128DCR with 1571 Multi-Speeder V3** (512 KB, 6821 PIA) | [`C1571_DOLPHINDOS26.bin`](rom/C1571_DOLPHINDOS26.bin), bank 4 | [`C128DolphinDos26-US.BIN`](rom/C128DolphinDos26-US.BIN) or [`C128DolphinDos26-DE.BIN`](rom/C128DolphinDos26-DE.BIN) (C128 mode), [`C64IIDolphinDos26.bin`](rom/C64IIDolphinDos26.bin) (C64 mode) | [Manual](manuals/en/DolphinDos26_Manual.pdf), chapter 9; [1571 manual](manuals/en/MultiSpeederC128DCR-1571_Manual.pdf); [1571 notes](docs/en/c1571-firmware.md); hardware: [repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-C128DCR-1571) |
+| **External 1571 with 1571 Multi-Speeder V3** (512 KB, 6821 PIA, parallel cable to the user port) | [`C1571_DOLPHINDOS26.bin`](rom/C1571_DOLPHINDOS26.bin), bank 4 (EPROM template with CBM DOS 310654-05 in the hardware repository) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) or [`C64IIDolphinDos26.bin`](rom/C64IIDolphinDos26.bin) (C64); on the C128 [`C128DolphinDos26-US.BIN`](rom/C128DolphinDos26-US.BIN) or [`C128DolphinDos26-DE.BIN`](rom/C128DolphinDos26-DE.BIN) plus `C64IIDolphinDos26.bin` | [1571 manual](manuals/en/MultiSpeeder1571_Manual.pdf); [1571 notes](docs/en/c1571-firmware.md); hardware: [repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) |
 
 **C64 II (short board):** BASIC and kernal share one ROM chip. Use [`C64IIDolphinDos26.bin`](rom/C64IIDolphinDos26.bin) (16 KB) there instead of `C64DolphinDos26.bin`. It holds the unchanged BASIC 901226-01 at offset `$0000` and the kernal at offset `$2000`.
 
@@ -75,6 +81,7 @@ The project consists of seven parts:
 - Three protocols in one kernal: DolphinDOS parallel, JiffyDOS and standard serial. For each access it picks the fastest method the addressed device supports, without any switching.
 - Shows the transfer type while loading: `LOADING DD:` for DolphinDOS parallel, `LOADING JF:` for JiffyDOS.
 - Function keys for SD2IEC to change directories and disk images and to load directly from the directory.
+- Also tested with S-JiffyDOS 1541 (SJD41), an extension of the JiffyDOS ROM for the 1541 by Jochen Adler that the kernal addresses like a JiffyDOS drive. Further information: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
 - Saves and loads game states of programs with their own interrupt handler completely (for example Eye of the Beholder), which the original DolphinDOS 2/3 kernal aborts.
 
 ### C128DolphinDos26 kernal
@@ -126,14 +133,14 @@ RUN
 |---|---|---|
 | `MS-STATUS` | 23 | Shows the drive error channel |
 | `MS-MEMTEST` | 27 | Tests the 512 KB SRAM (64 banks) with 4 patterns, 1 to 99 runs, result per bank |
-| `MS-FASTCOPY` | 43 | Disk copy through the 512 KB RAM or a REU (`TRANSFER: FAST` with its own fast drive code), 35/40/auto tracks, verify on/off, `ON ERROR: STOP/SKIP` (skip faulty tracks and count them), several copies, directory view, D64 file import and export; on the 1571 also double-sided disks and D71 files |
+| `MS-FASTCOPY` | 46 | Disk copy through the 512 KB RAM or a REU (`TRANSFER: FAST` with its own fast drive code), 35/40/auto tracks, verify on/off, `ON ERROR: STOP/SKIP` (skip faulty tracks and count them), several copies, directory view, D64 file import and export; on the 1571 also double-sided disks and D71 files |
 | `MS-NIBCOPY` | 52 (BETA) | Nibble copier after the model of nibtools: reads and writes tracks bit by bit (syncs, gaps, tracks 36 to 42, half tracks, weak bits), storage in the Multi-Speeder RAM or a REU, G64 import and export; on the 1571 with index hole (same track position as the original), on the C128 at 2 MHz |
 | `MS-RS232` | 3 | RS-232 driver in RAM at $9800 to $9FFF, because the kernal has no RS-232 routines |
-| `MS-15SECCOPY` | 18 | New version of 15 Seconds Copy by Mike Pall: copies normally formatted disks as raw GCR over the parallel cable |
+| `MS-15SECCOPY` | 19 | New version of 15 Seconds Copy by Mike Pall: copies normally formatted disks as raw GCR over the parallel cable |
 
 `MS-MEMTEST` needs the Multi-Speeder. `MS-FASTCOPY` works without it if there is a REU of at least 256 KB and a parallel connection (PIA or VIA1), for example with DolphinDos26UL. The raw driver [`RS232DRV-9800.prg`](ms-tools/prg/RS232DRV-9800.prg) is included as well.
 
-`MS-15SECCOPY` (Build 18) is a new version of **15 Seconds Copy**, written by **Mike Pall** in 1986. It copies normally formatted disks as raw GCR over the parallel cable and shows every track and sector in a grid. Minimum requirements: a REU of at least 256 KB (512 KB for 40 tracks) and a parallel cable on VIA1 or on the PIA, with a 1541 or 1571 as device 8; for BACKUP and VERIFY a 1571 with DolphinDOS is set to 1 MHz with `X-` and back to 2 MHz with `X+` afterwards. The original 1541 ROM and the original kernal are enough; DolphinDos26 and the Multi-Speeder are not needed. On real hardware (C64U, 1541, REU), BACKUP and VERIFY ran over all 683 blocks without errors, on VIA1 under DolphinDOS 2.0 and on the PIA under DolphinDos26DD2, with source and target being the same disk; 35 tracks took at most 12 s reading and 18 s writing. The REU is used as a buffer, so data stored there may be overwritten.
+`MS-15SECCOPY` (Build 19) is a new version of **15 Seconds Copy**, written by **Mike Pall** in 1986. It copies normally formatted disks as raw GCR over the parallel cable and shows every track and sector in a grid. Minimum requirements: a REU of at least 256 KB (512 KB for 40 tracks) and a parallel cable on VIA1 or on the PIA, with a 1541 or 1571 as device 8; for BACKUP and VERIFY a 1571 with DolphinDOS is set to 1 MHz with `X-` and back to 2 MHz with `X+` afterwards, a 1571 with SpeedDos26 with `U0>M0` and `U0>M1`. The original 1541 ROM and the original kernal are enough; DolphinDos26 and the Multi-Speeder are not needed. On real hardware (C64U, 1541, REU), BACKUP and VERIFY ran over all 683 blocks without errors, on VIA1 under DolphinDOS 2.0 and on the PIA under DolphinDos26DD2, with source and target being the same disk; 35 tracks took at most 12 s reading and 18 s writing. The REU is used as a buffer, so data stored there may be overwritten.
 
 > **MS-NIBCOPY is a BETA version** and is being developed further; functions and operation can still change. It needs the MS-RAM of the Multi-Speeder or a REU and an active parallel connection, and it has not been tested with DolphinDOS 2.
 
@@ -146,7 +153,7 @@ RUN
 
 ## Performance
 
-Measured in the VICE emulator (C64 PAL, 1541 with Multi-Speeder, real time). Real hardware may differ.
+Measured with a C64 PAL and a 1541 with Multi-Speeder.
 
 | Operation | Time |
 |---|---|
@@ -157,14 +164,14 @@ Measured in the VICE emulator (C64 PAL, 1541 with Multi-Speeder, real time). Rea
 | Read disk (35 tracks) into RAM, `CDR1` | 22.9 s |
 | Write RAM to disk with verify, `CDW1` | 26.3 s |
 
-Program with 16,000 bytes, by protocol (also measured in VICE):
+Program with 16,000 bytes, by protocol:
 
 | Operation | DolphinDos26 parallel | JiffyDOS (1541) | Standard DOS |
 |---|---|---|---|
 | LOAD | 2.1 s | 6.7 s | 41.2 s |
 | SAVE | 4.6 s | 19.1 s | 48.4 s |
 
-C128DCR with 1571 Multi-Speeder and C1571DolphinDos26 (also measured in VICE):
+C128DCR with 1571 Multi-Speeder and C1571DolphinDos26:
 
 | Operation | Time |
 |---|---|
@@ -186,6 +193,8 @@ C128DCR with 1571 Multi-Speeder and C1571DolphinDos26 (also measured in VICE):
 
 **C128DCR with 1571 Multi-Speeder V3:** Put `C1571_DOLPHINDOS26.bin` (64 KB) at offset `$30000` of the 512 KB image of the 1571 Multi-Speeder EPROM (bank 4), program a 29F040 (alternatively 27C040 or SST39SF040) and fit it. Switch with `@I:4@RNROM`; the drive then reports `73,DOLPHINDOS26 1571`. On the C128 use `C128DolphinDos26-US.BIN` or `C128DolphinDos26-DE.BIN` and, for C64 mode, `C64IIDolphinDos26.bin`.
 
+**External 1571 with 1571 Multi-Speeder V3:** Program the EPROM template `C1571_29F040.BIN` from the [hardware repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) (CBM DOS 310654-05, DolphinDOS 3 in bank 3, DolphinDos26 in bank 4), remove the DOS ROM of the 1571 and connect CN1 to the user port with the parallel cable. Switch with `@I:4@RNROM`. On the C64 use `C64DolphinDos26.bin` (C64 II: `C64IIDolphinDos26.bin`), on the C128 the C128 kernal as above.
+
 **C64 Ultimate:** Copy both files to a USB stick or SD card. In the menu set for drive A: on, type 1541, device 8, 1541 ROM `C1541_DOLPHINDOS26UL.bin`, 8 KB RAM at $6000 to $7FFF, parallel cable on. Select `C64DolphinDos26.bin` as the kernal, save and cold start. `@` then shows `73,DOLPHINDOS26 C64U,00,00`.
 
 Full steps and troubleshooting are in the manuals.
@@ -198,7 +207,7 @@ Full steps and troubleshooting are in the manuals.
 - `MS-MEMTEST` overwrites the RAM content.
 - Programs with their own fast loader or copy protection sometimes only run with the original kernal and original DOS.
 - DolphinDos26 uses illegal NMOS 6502 instructions like DolphinDOS, so it does not run on a WDC 65C02.
-- C1571DolphinDos26 always runs at 2 MHz like the original DolphinDOS 3. Enter `@X-` before loading programs with their own fast loader, or switch to the Commodore ROM with `@I:1@RNROM`. MS-15SECCOPY sets a 1571 with DolphinDOS to 1 MHz itself for BACKUP and VERIFY; MS-NIBCOPY detects the 1571 and loads its own drive code (1 MHz for disk access, index hole).
+- C1571DolphinDos26 always runs at 2 MHz like the original DolphinDOS 3. Enter `@X-` before loading programs with their own fast loader, or switch to the Commodore ROM with `@I:1@RNROM`. MS-15SECCOPY sets a 1571 with DolphinDOS or SpeedDos26 to 1 MHz itself for BACKUP and VERIFY; MS-NIBCOPY detects the 1571 and loads its own drive code (1 MHz for disk access, index hole).
 - The C128 kernal has no tape and no kernal RS-232 routines: OPEN to device 1 or 2 reports ILLEGAL DEVICE. Programs with their own RS-232 driver are not affected. `LOAD"name"` without a device number loads from the default device to the start of BASIC, as usual on the C128.
 
 ## What is in this repository?
@@ -248,7 +257,7 @@ Details: [docs/en/c64-kernal.md](docs/en/c64-kernal.md), [docs/en/c128-kernal.md
 Terms of use: [LICENSE.md](LICENSE.md). JiffyDOS is licensed today via Jim Brain, RETRO Innovations. In short: private, non-commercial use, no sale without asking the developer. This is a private hobby project, provided without any warranty and used at your own risk. Formatting and writing change disks irreversibly, so make backups first. Observe copyright when copying disks.
 
 - Developer: Frank Eggen, <frankeggen@emden.net>
-- Projects: <https://github.com/fraegg>
+- Projects: <https://github.com/FraEgg/Switchless-Multi-Speeder-Project>
 - Voluntary donation: [PayPal](https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=Q8HXKYARXKT4L&ssrt=1714757590172)
 
 ---
@@ -268,18 +277,19 @@ Das Projekt besteht aus sieben Teilen:
 | **DolphinDos26DD2** | Alle Funktionen von DolphinDos26, aber mit dem Parallelkabel am VIA1 wie DolphinDos26UL | 1541 mit Switchless Multi-Speeder V3 |
 | **C64DolphinDos26** | C64-Kernal, der DolphinDOS parallel, JiffyDOS und seriell vereint | C64, C64 II und C128 im C64-Modus |
 | **C128DolphinDos26** | C128-Kernal mit denselben Protokollen, `@`-Wedge und den Funktionstasten des C64-Kernals | C128 im C128-Modus |
-| **C1571DolphinDos26** | Laufwerks-Firmware für die 1571 mit allen Funktionen von DolphinDos26 und doppelseitigen Disketten | 1571 des C128DCR mit 1571 Multi-Speeder V3 |
+| **C1571DolphinDos26** | Laufwerks-Firmware für die 1571 mit allen Funktionen von DolphinDos26 und doppelseitigen Disketten | 1571 mit 1571 Multi-Speeder V3 (externe 1571 und C128DCR) |
 | **MS-Tools** | C64-Programme zum Prüfen und Kopieren | C64-Modus, mit der Firmware oben |
 
 ## Welche Dateien brauche ich?
 
 | Deine Hardware | Laufwerks-ROM | C64-Kernal | Handbuch |
 |---|---|---|---|
-| **1541 mit Switchless Multi-Speeder V3** (512 KB, 6821-PIA) | [`1541DolphinDos26.bin`](rom/1541DolphinDos26.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [Handbuch](manuals/de/DolphinDos26_Handbuch.pdf) |
+| **1541 mit Switchless Multi-Speeder V3** (512 KB, 6821-PIA) | [`1541DolphinDos26.bin`](rom/1541DolphinDos26.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [Handbuch](manuals/de/DolphinDos26_Handbuch.pdf); [1541-Handbuch](manuals/de/MultiSpeeder1541_Handbuch.pdf); Hardware und EPROM-Vorlage: [Repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1541) |
 | **Commodore 64 Ultimate** (emuliertes Laufwerk) | [`C1541_DOLPHINDOS26UL.bin`](rom/C1541_DOLPHINDOS26UL.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [UL-Handbuch](manuals/de/DolphinDos26UL_Handbuch.pdf) |
 | **Echte 1541 mit DolphinDOS-2-Hardware** (VIA1-Kabel, 8 KB RAM) | [`C1541_DOLPHINDOS26UL.bin`](rom/C1541_DOLPHINDOS26UL.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [UL-Handbuch](manuals/de/DolphinDos26UL_Handbuch.pdf) |
 | **1541 mit Switchless Multi-Speeder V3 und SpeedDOS-Kabel** (512 KB, VIA1-Kabel) | [`C1541_DOLPHINDOS26DD2.bin`](rom/C1541_DOLPHINDOS26DD2.bin) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) | [Handbuch](manuals/de/DolphinDos26_Handbuch.pdf), Kapitel 8; Unterschiede in den [Firmware-Notizen](docs/de/firmware-source-notes.md#dolphindos26dd2-multi-speeder-v3-mit-speeddos-parallelkabel) |
 | **C128DCR mit 1571 Multi-Speeder V3** (512 KB, 6821-PIA) | [`C1571_DOLPHINDOS26.bin`](rom/C1571_DOLPHINDOS26.bin), Bank 4 | [`C128DolphinDos26-US.BIN`](rom/C128DolphinDos26-US.BIN) oder [`C128DolphinDos26-DE.BIN`](rom/C128DolphinDos26-DE.BIN) (C128-Modus), [`C64IIDolphinDos26.bin`](rom/C64IIDolphinDos26.bin) (C64-Modus) | [Handbuch](manuals/de/DolphinDos26_Handbuch.pdf), Kapitel 9; [1571-Handbuch](manuals/de/MultiSpeederC128DCR-1571_Handbuch.pdf); [1571-Notizen](docs/de/c1571-firmware.md); Hardware: [Repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-C128DCR-1571) |
+| **Externe 1571 mit 1571 Multi-Speeder V3** (512 KB, 6821-PIA, Parallelkabel zum Userport) | [`C1571_DOLPHINDOS26.bin`](rom/C1571_DOLPHINDOS26.bin), Bank 4 (EPROM-Vorlage mit CBM-DOS 310654-05 im Hardware-Repository) | [`C64DolphinDos26.bin`](rom/C64DolphinDos26.bin) oder [`C64IIDolphinDos26.bin`](rom/C64IIDolphinDos26.bin) (C64); am C128 [`C128DolphinDos26-US.BIN`](rom/C128DolphinDos26-US.BIN) oder [`C128DolphinDos26-DE.BIN`](rom/C128DolphinDos26-DE.BIN) und `C64IIDolphinDos26.bin` | [1571-Handbuch](manuals/de/MultiSpeeder1571_Handbuch.pdf); [1571-Notizen](docs/de/c1571-firmware.md); Hardware: [Repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) |
 
 **C64 II (Kurzplatine):** BASIC und Kernal liegen in einem einzigen ROM-Baustein. Dort [`C64IIDolphinDos26.bin`](rom/C64IIDolphinDos26.bin) (16 KB) statt `C64DolphinDos26.bin` verwenden. Die Datei enthält das unveränderte BASIC 901226-01 bei Offset `$0000` und den Kernal bei Offset `$2000`.
 
@@ -301,6 +311,7 @@ Das Projekt besteht aus sieben Teilen:
 - Drei Protokolle in einem Kernal: DolphinDOS parallel, JiffyDOS und seriell. Bei jedem Zugriff wählt er das schnellste Verfahren, das das angesprochene Gerät beherrscht, ohne Umschalten.
 - Zeigt beim Laden die Übertragungsart an: `LOADING DD:` für DolphinDOS parallel, `LOADING JF:` für JiffyDOS.
 - Funktionstasten für SD2IEC zum Wechseln von Verzeichnissen und Disk-Images und zum Laden direkt aus dem Directory.
+- Auch mit S-JiffyDOS 1541 (SJD41) getestet, einer Erweiterung des JiffyDOS-ROMs für die 1541 von Jochen Adler, die der Kernal wie ein JiffyDOS-Laufwerk anspricht. Weitere Informationen: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
 - Speichert und lädt Spielstände von Programmen mit eigenem Interrupt vollständig (z. B. Eye of the Beholder), die der Original-Kernal von DolphinDOS 2/3 abbricht.
 
 ### Kernal C128DolphinDos26
@@ -352,20 +363,20 @@ RUN
 |---|---|---|
 | `MS-STATUS` | 23 | Zeigt den Fehlerkanal des Laufwerks |
 | `MS-MEMTEST` | 27 | Prüft die 512 KB SRAM (64 Bänke) mit 4 Mustern, 1 bis 99 Läufe, Ergebnis je Bank |
-| `MS-FASTCOPY` | 43 | Diskettenkopie über das 512-KB-RAM oder eine REU (`TRANSFER: FAST` mit eigenem schnellen Laufwerkscode), 35/40/AUTO Spuren, Verify an/aus, `ON ERROR: STOP/SKIP` (fehlerhafte Spuren überspringen und zählen), mehrere Kopien, Directory-Anzeige, D64-Import und -Export; an der 1571 auch doppelseitige Disketten und D71-Dateien |
+| `MS-FASTCOPY` | 46 | Diskettenkopie über das 512-KB-RAM oder eine REU (`TRANSFER: FAST` mit eigenem schnellen Laufwerkscode), 35/40/AUTO Spuren, Verify an/aus, `ON ERROR: STOP/SKIP` (fehlerhafte Spuren überspringen und zählen), mehrere Kopien, Directory-Anzeige, D64-Import und -Export; an der 1571 auch doppelseitige Disketten und D71-Dateien |
 | `MS-NIBCOPY` | 52 (BETA) | Nibble-Kopierer nach dem Vorbild der nibtools: Spuren bitgenau lesen und schreiben (Syncs, Lücken, Spur 36 bis 42, Halbspuren, Weak Bits), Ablage im Multi-Speeder-RAM oder in einer REU, G64-Import und -Export; an der 1571 mit Indexloch (gleiche Spurlage wie das Original), am C128 mit 2 MHz |
 | `MS-RS232` | 3 | RS-232-Treiber im RAM bei $9800 bis $9FFF, weil der Kernal keine RS-232-Routinen hat |
-| `MS-15SECCOPY` | 18 | Neue Fassung von 15 Seconds Copy von Mike Pall: kopiert normal formatierte Disketten als rohes GCR über das Parallelkabel |
+| `MS-15SECCOPY` | 19 | Neue Fassung von 15 Seconds Copy von Mike Pall: kopiert normal formatierte Disketten als rohes GCR über das Parallelkabel |
 
 `MS-MEMTEST` braucht den Multi-Speeder. `MS-FASTCOPY` geht auch ohne ihn, wenn eine REU ab 256 KB und eine Parallelverbindung (PIA oder VIA1) vorhanden sind, zum Beispiel mit DolphinDos26UL. Der reine Treiber [`RS232DRV-9800.prg`](ms-tools/prg/RS232DRV-9800.prg) liegt ebenfalls bei.
 
-`MS-15SECCOPY` (Build 18) ist eine neue Fassung von **15 Seconds Copy**, das **Mike Pall** 1986 geschrieben hat. Es kopiert normal formatierte Disketten als rohes GCR über das Parallelkabel und zeigt jede Spur und jeden Sektor in einem Raster. Mindestanforderungen: eine REU ab 256 KB (512 KB für 40 Spuren) und ein Parallelkabel am VIA1 oder am PIA, dazu eine 1541 oder 1571 als Gerät 8; eine 1571 mit DolphinDOS stellt das Programm für BACKUP und VERIFY mit `X-` auf 1 MHz und danach mit `X+` wieder auf 2 MHz. Original-1541-ROM und Original-Kernal genügen; DolphinDos26 und Multi-Speeder sind nicht nötig. Auf echter Hardware (C64U, 1541, REU) liefen BACKUP und VERIFY über alle 683 Blöcke ohne Fehler, am VIA1 unter DolphinDOS 2.0 und am PIA unter DolphinDos26DD2, Quelle und Ziel waren dabei dieselbe Diskette; 35 Spuren brauchten höchstens 12 s zum Lesen und 18 s zum Schreiben. Die REU dient als Zwischenspeicher, dort abgelegte Daten können überschrieben werden.
+`MS-15SECCOPY` (Build 19) ist eine neue Fassung von **15 Seconds Copy**, das **Mike Pall** 1986 geschrieben hat. Es kopiert normal formatierte Disketten als rohes GCR über das Parallelkabel und zeigt jede Spur und jeden Sektor in einem Raster. Mindestanforderungen: eine REU ab 256 KB (512 KB für 40 Spuren) und ein Parallelkabel am VIA1 oder am PIA, dazu eine 1541 oder 1571 als Gerät 8; eine 1571 mit DolphinDOS stellt das Programm für BACKUP und VERIFY mit `X-` auf 1 MHz und danach mit `X+` wieder auf 2 MHz, eine 1571 mit SpeedDos26 mit `U0>M0` und `U0>M1`. Original-1541-ROM und Original-Kernal genügen; DolphinDos26 und Multi-Speeder sind nicht nötig. Auf echter Hardware (C64U, 1541, REU) liefen BACKUP und VERIFY über alle 683 Blöcke ohne Fehler, am VIA1 unter DolphinDOS 2.0 und am PIA unter DolphinDos26DD2, Quelle und Ziel waren dabei dieselbe Diskette; 35 Spuren brauchten höchstens 12 s zum Lesen und 18 s zum Schreiben. Die REU dient als Zwischenspeicher, dort abgelegte Daten können überschrieben werden.
 
 > **MS-NIBCOPY ist eine BETA-Version** und wird weiterentwickelt; Funktionen und Bedienung können sich noch ändern. Es braucht das MS-RAM des Multi-Speeders oder eine REU und eine aktive Parallelverbindung und ist nicht mit DolphinDOS 2 getestet.
 
 ## Leistung
 
-Gemessen im Emulator VICE (C64 PAL, 1541 mit Multi-Speeder, Echtzeit). Auf echter Hardware kann es abweichen.
+Gemessen mit C64 PAL und 1541 mit Multi-Speeder.
 
 | Vorgang | Zeit |
 |---|---|
@@ -376,14 +387,14 @@ Gemessen im Emulator VICE (C64 PAL, 1541 mit Multi-Speeder, Echtzeit). Auf echte
 | Diskette (35 Spuren) ins RAM lesen, `CDR1` | 22,9 s |
 | RAM auf Diskette schreiben mit Verify, `CDW1` | 26,3 s |
 
-Programm mit 16 000 Bytes, nach Protokoll (ebenfalls in VICE gemessen):
+Programm mit 16 000 Bytes, nach Protokoll:
 
 | Vorgang | DolphinDos26 parallel | JiffyDOS (1541) | Standard-DOS |
 |---|---|---|---|
 | LOAD | 2,1 s | 6,7 s | 41,2 s |
 | SAVE | 4,6 s | 19,1 s | 48,4 s |
 
-C128DCR mit 1571 Multi-Speeder und C1571DolphinDos26 (ebenfalls in VICE gemessen):
+C128DCR mit 1571 Multi-Speeder und C1571DolphinDos26:
 
 | Vorgang | Zeit |
 |---|---|
@@ -405,6 +416,8 @@ C128DCR mit 1571 Multi-Speeder und C1571DolphinDos26 (ebenfalls in VICE gemessen
 
 **C128DCR mit 1571 Multi-Speeder V3:** `C1571_DOLPHINDOS26.bin` (64 KB) an Offset `$30000` des 512-KB-Abbilds des 1571-Multi-Speeder-EPROMs legen (Bank 4), einen 29F040 (alternativ 27C040 oder SST39SF040) brennen und einsetzen. Umschalten mit `@I:4@RNROM`; das Laufwerk meldet dann `73,DOLPHINDOS26 1571`. Am C128 `C128DolphinDos26-US.BIN` oder `C128DolphinDos26-DE.BIN` und für den C64-Modus `C64IIDolphinDos26.bin` verwenden.
 
+**Externe 1571 mit 1571 Multi-Speeder V3:** Die EPROM-Vorlage `C1571_29F040.BIN` aus dem [Hardware-Repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) brennen (CBM-DOS 310654-05, DolphinDOS 3 in Bank 3, DolphinDos26 in Bank 4), das DOS-ROM der 1571 entfernen und CN1 mit dem Parallelkabel an den Userport anschließen. Umschalten mit `@I:4@RNROM`. Am C64 `C64DolphinDos26.bin` (C64 II: `C64IIDolphinDos26.bin`), am C128 den C128-Kernal wie oben verwenden.
+
 **C64 Ultimate:** Beide Dateien auf einen USB-Stick oder eine SD-Karte kopieren. Im Menü für Laufwerk A einstellen: ein, Typ 1541, Gerät 8, 1541-ROM `C1541_DOLPHINDOS26UL.bin`, 8 KB RAM bei $6000 bis $7FFF, Parallelkabel ein. `C64DolphinDos26.bin` als Kernal wählen, speichern und kalt starten. `@` zeigt dann `73,DOLPHINDOS26 C64U,00,00`.
 
 Alle Schritte und die Fehlersuche stehen in den Handbüchern.
@@ -417,7 +430,7 @@ Alle Schritte und die Fehlersuche stehen in den Handbüchern.
 - `MS-MEMTEST` überschreibt den RAM-Inhalt.
 - Programme mit eigenem Schnelllader oder Kopierschutz laufen mitunter nur mit Original-Kernal und Original-DOS.
 - DolphinDos26 verwendet wie DolphinDOS illegale NMOS-6502-Befehle und läuft daher nicht auf einer WDC 65C02.
-- C1571DolphinDos26 läuft wie das originale DolphinDOS 3 immer mit 2 MHz. Vor dem Laden von Programmen mit eigenem Schnelllader `@X-` eingeben oder mit `@I:1@RNROM` auf das Commodore-ROM umschalten. MS-15SECCOPY stellt eine 1571 mit DolphinDOS für BACKUP und VERIFY selbst auf 1 MHz; MS-NIBCOPY erkennt die 1571 und lädt einen eigenen Laufwerkscode (1 MHz für den Diskettenzugriff, Indexloch).
+- C1571DolphinDos26 läuft wie das originale DolphinDOS 3 immer mit 2 MHz. Vor dem Laden von Programmen mit eigenem Schnelllader `@X-` eingeben oder mit `@I:1@RNROM` auf das Commodore-ROM umschalten. MS-15SECCOPY stellt eine 1571 mit DolphinDOS oder SpeedDos26 für BACKUP und VERIFY selbst auf 1 MHz; MS-NIBCOPY erkennt die 1571 und lädt einen eigenen Laufwerkscode (1 MHz für den Diskettenzugriff, Indexloch).
 - Der C128-Kernal hat keine Kassetten- und keine Kernal-RS-232-Routinen: OPEN auf Gerät 1 oder 2 meldet ILLEGAL DEVICE. Programme mit eigenem RS-232-Treiber sind nicht betroffen. `LOAD"name"` ohne Gerätenummer lädt vom Standardgerät an den BASIC-Anfang, wie beim C128 üblich.
 
 ## Was liegt in diesem Repository?
@@ -467,5 +480,5 @@ Einzelheiten: [docs/de/c64-kernal.md](docs/de/c64-kernal.md), [docs/de/c128-kern
 Nutzungsbedingungen: [LICENSE.md](LICENSE.md). JiffyDOS wird heute über Jim Brain, RETRO Innovations, lizenziert. Kurz: privater, nicht kommerzieller Gebrauch, kein Verkauf ohne Rücksprache mit dem Entwickler. Dies ist ein privates Hobbyprojekt, ohne jede Gewährleistung und auf eigene Gefahr. Formatieren und Schreiben verändern Disketten unwiderruflich, daher vorher Sicherungskopien anlegen. Beim Kopieren von Disketten sind die Urheberrechte zu beachten.
 
 - Entwickler: Frank Eggen, <frankeggen@emden.net>
-- Projekte: <https://github.com/fraegg>
+- Projekte: <https://github.com/FraEgg/Switchless-Multi-Speeder-Project>
 - Freiwillige Spende: [PayPal](https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=Q8HXKYARXKT4L&ssrt=1714757590172)

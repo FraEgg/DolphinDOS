@@ -30,7 +30,7 @@ REPO = pathlib.Path(__file__).resolve().parent.parent
 
 def find_root(start):
     """Project folder: the first parent with Builds and dd25 (the repository lives in
-    Git/DolphinDOS26; this also works from a worktree below .claude/worktrees)."""
+    Git/DolphinDOS; this also works from a worktree below .claude/worktrees)."""
     for d in start.parents:
         if (d / 'Builds').is_dir() and (d / 'dd25').is_dir():
             return d
@@ -54,7 +54,9 @@ ROMS = ['1541DolphinDos26.bin', 'C1541_DOLPHINDOS26UL.bin', 'C1541_DOLPHINDOS26D
 MANUALS = {'DolphinDos26_Handbuch.pdf': 'DolphinDos26_Manual.pdf',
            'DolphinDos26UL_Handbuch.pdf': 'DolphinDos26UL_Manual.pdf',
            'JiffyDOS_Handbuch.pdf': 'JiffyDOS_Manual.pdf',
-           'MultiSpeederC128DCR-1571_Handbuch.pdf': 'MultiSpeederC128DCR-1571_Manual.pdf'}
+           'MultiSpeederC128DCR-1571_Handbuch.pdf': 'MultiSpeederC128DCR-1571_Manual.pdf',
+           'MultiSpeeder1571_Handbuch.pdf': 'MultiSpeeder1571_Manual.pdf',
+           'MultiSpeeder1541_Handbuch.pdf': 'MultiSpeeder1541_Manual.pdf'}
 # Manuals that state the MD5 checksums of the published ROMs
 ROM_MANUALS = ('DolphinDos26_Handbuch.pdf', 'DolphinDos26_Manual.pdf',
                'DolphinDos26UL_Handbuch.pdf', 'DolphinDos26UL_Manual.pdf')
