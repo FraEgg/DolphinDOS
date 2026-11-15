@@ -81,6 +81,7 @@ The project consists of seven parts:
 - Three protocols in one kernal: DolphinDOS parallel, JiffyDOS and standard serial. For each access it picks the fastest method the addressed device supports, without any switching.
 - Shows the transfer type while loading: `LOADING DD:` for DolphinDOS parallel, `LOADING JF:` for JiffyDOS.
 - Function keys for SD2IEC to change directories and disk images and to load directly from the directory.
+- `@8` to `@11` (in general `@0` to `@19`) set the default device for the `@` commands and for `LOAD`/`SAVE` without a device number.
 - Also tested with S-JiffyDOS 1541 (SJD41), an extension of the JiffyDOS ROM for the 1541 by Jochen Adler that the kernal addresses like a JiffyDOS drive. Further information: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
 - Saves and loads game states of programs with their own interrupt handler completely (for example Eye of the Beholder), which the original DolphinDOS 2/3 kernal aborts.
 
@@ -311,6 +312,7 @@ Das Projekt besteht aus sieben Teilen:
 - Drei Protokolle in einem Kernal: DolphinDOS parallel, JiffyDOS und seriell. Bei jedem Zugriff wählt er das schnellste Verfahren, das das angesprochene Gerät beherrscht, ohne Umschalten.
 - Zeigt beim Laden die Übertragungsart an: `LOADING DD:` für DolphinDOS parallel, `LOADING JF:` für JiffyDOS.
 - Funktionstasten für SD2IEC zum Wechseln von Verzeichnissen und Disk-Images und zum Laden direkt aus dem Directory.
+- `@8` bis `@11` (allgemein `@0` bis `@19`) stellen das Standardgerät für die `@`-Befehle und für `LOAD`/`SAVE` ohne Gerätenummer ein.
 - Auch mit S-JiffyDOS 1541 (SJD41) getestet, einer Erweiterung des JiffyDOS-ROMs für die 1541 von Jochen Adler, die der Kernal wie ein JiffyDOS-Laufwerk anspricht. Weitere Informationen: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
 - Speichert und lädt Spielstände von Programmen mit eigenem Interrupt vollständig (z. B. Eye of the Beholder), die der Original-Kernal von DolphinDOS 2/3 abbricht.
 

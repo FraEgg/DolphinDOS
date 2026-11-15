@@ -122,7 +122,7 @@ Nach dem JiffyDOS-sd2iec-Kernal (auf den früheren Monitor-Tasten):
 |---|---|---|
 | C=F3 | `@CD←` + RETURN | SD2IEC: ein Verzeichnis bzw. Disk-Image zurück |
 | C=F5 | `  "CD:` + RETURN | auf einer Directory-Zeile: in dieses Verzeichnis/Image wechseln |
-| C=F7 | `LOAD` + Tab + `:` | auf einer Directory-Zeile: diese Datei laden (RETURN selbst drücken); ohne Gerätenummer gilt das mit `@9` gesetzte Gerät, sonst Gerät 8 |
+| C=F7 | `LOAD` + Tab + `:` | auf einer Directory-Zeile: diese Datei laden (RETURN selbst drücken); ohne Gerätenummer gilt das mit `@9` (auch `@10`, `@11`) gesetzte Gerät, sonst Gerät 8 |
 
 Vor jedem F-Tasten-Text prüft `dd_fkey_init` ($F750), ob die Cursorzeile eine
 Directory-Zeile mit Anführungszeichen in Spalte 6 ist (5-stellige
@@ -167,19 +167,19 @@ mit `FREI:` und dem Label `frei_xxxx` markiert und mit `$AA` gefüllt.
 | $F206–$F20D | 8 | Rest hinter neuem Code |
 | $F229–$F236 | 14 | Monitor (mon_cmds) |
 | $F275–$F277 | 3 | Rest hinter neuem Code |
-| $F2AA–$F2BD | 20 | Monitor (mon_rvsout) |
+| $F2BD–$F2BD | 1 | Rest hinter dd_geraet (Monitor, mon_rvsout) |
 | $F484–$F494 | 17 | Rest hinter neuem Code |
 | $F662–$F675 | 20 | Monitorbefehl G |
 | $F731–$F735 | 5 | Rest hinter dec_tab_lo |
 | $F765–$F769 | 5 | Rest hinter dd_fkey_init |
 | $F88E–$F88F | 2 | Rest des alten Ausweichwegs |
 | $FA6B–$FA6B | 1 | Rest hinter dd_ctrl_std |
-| $FB91–$FBA0 | 16 | Kassettenreste udst/rd180, Monitor (mon_out_x, out_space) |
 | $FCC1–$FCD0 | 16 | tote Kassettenroutinen tnif/tnof |
 | $FE17–$FE17 | 1 | Rest hinter txt_ntsc (RS-232-Status in READST) |
-| **gesamt** | **153** | |
+| **gesamt** | **118** | |
 
 Geändertes Verhalten:
+- `@10` bis `@19` wählen das Standardgerät zweistellig (`dd_geraet`: Befehl aus genau zwei Zeichen, erstes `1`, zweites eine Ziffer); eine einzelne Ziffer wirkt wie bisher. Test: `python3 tests/test_geraet.py` (Laufwerke auf Gerät 8, 10 und 11).
 - `SYS 0` und BRK gehen über den BRK-Vektor $0316, Standard ist der BASIC-Warmstart.
 - CTRL + Reset/RESTORE hat keine Funktion mehr.
 - Farben wie im Original-C64-ROM: Rahmen $0E, Hintergrund $06, Text $0E (Dolphin:

@@ -107,7 +107,7 @@ Modeled on the JiffyDOS sd2iec kernal (on the former monitor keys):
 |---|---|---|
 | C=F3 | `@CD←` + RETURN | SD2IEC: one directory or disk image back |
 | C=F5 | `  "CD:` + RETURN | on a directory line: change to this directory/image |
-| C=F7 | `LOAD` + Tab + `:` | on a directory line: load this file (press RETURN yourself); without a device number, the device set with `@9` applies, otherwise device 8 |
+| C=F7 | `LOAD` + Tab + `:` | on a directory line: load this file (press RETURN yourself); without a device number, the device set with `@9` (also `@10`, `@11`) applies, otherwise device 8 |
 
 Before each F key text, `dd_fkey_init` ($F750) checks whether the cursor line is a
 directory line with quotation marks in column 6 (5-digit
@@ -152,19 +152,19 @@ marked with `FREI:` and the label `frei_xxxx` and filled with `$AA`.
 | $F206–$F20D | 8 | remainder after new code |
 | $F229–$F236 | 14 | monitor (mon_cmds) |
 | $F275–$F277 | 3 | remainder after new code |
-| $F2AA–$F2BD | 20 | monitor (mon_rvsout) |
+| $F2BD–$F2BD | 1 | rest behind dd_geraet (monitor, mon_rvsout) |
 | $F484–$F494 | 17 | remainder after new code |
 | $F662–$F675 | 20 | monitor command G |
 | $F731–$F735 | 5 | remainder after dec_tab_lo |
 | $F765–$F769 | 5 | remainder after dd_fkey_init |
 | $F88E–$F88F | 2 | remainder of the old detour |
 | $FA6B–$FA6B | 1 | remainder after dd_ctrl_std |
-| $FB91–$FBA0 | 16 | cassette remnants udst/rd180, monitor (mon_out_x, out_space) |
 | $FCC1–$FCD0 | 16 | dead cassette routines tnif/tnof |
 | $FE17–$FE17 | 1 | remainder after txt_ntsc (RS-232 status in READST) |
-| **total** | **153** | |
+| **total** | **118** | |
 
 Changed behavior:
+- `@10` to `@19` select the default device with two digits (`dd_geraet`: a command of exactly two characters, the first `1`, the second a digit); a single digit works as before. Test: `python3 tests/test_geraet.py` (drives on devices 8, 10 and 11).
 - `SYS 0` and BRK go through the BRK vector $0316, the default is the BASIC warm start.
 - CTRL + Reset/RESTORE no longer has any function.
 - Colors as in the original C64 ROM: border $0E, background $06, text $0E (Dolphin:
