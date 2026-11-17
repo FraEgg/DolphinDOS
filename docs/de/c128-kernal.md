@@ -29,7 +29,7 @@ Aus demselben Quelltext entstehen zwei Kernals:
 | `C128DolphinDos26-US.BIN` | international, USA | US-Editor 318020-05; CAPS LOCK wie gewohnt |
 | `C128DolphinDos26-DE.BIN` | deutschsprachiger Raum | zusätzlich der deutsche Tastaturtreiber aus 315078-03: die CAPS-LOCK-Taste ist die **ASCII/DIN-Taste** (eingerastet = DIN mit ä ö ü ß, vertauschtem Y/Z und Tottasten, oben = ASCII), beim Umschalten wird der Zeichensatz ins 80-Zeichen-RAM geladen |
 
-Der Treiber (`src/c128dd/din_treiber.s`, 524 Byte) stammt aus `EDITOR_C128_DIN/german.src`. Beim Original liegt er bei $FC80, dort stehen in DolphinDos26 die JiffyDOS-Routinen. In der DE-Fassung liegt er deshalb in der Lücke hinter dem Wedge ($E7C5–$E9D0, Tabellen auf Seite $E8). Eingehängt ist er wie beim deutschen Editor an fünf Stellen (`.ifdef DIN`): Sprungtabelle `scnkey` ($C012), CINT (`nat_init`, Tabellen-Init über `ascii_din`/`nat_scnkey`), Tastenabfrage in der Editorschleife und `keychk` in ed3 (`nat_keychk`). `tools/din_vergleich.py` assembliert den Treiber testweise bei $FC80 und vergleicht ihn byteweise mit 315078-03 (0 Abweichungen). Ohne `DIN` ist das ROM byte-gleich mit der bisherigen Fassung (MD5 `859493314e98777a595d0f2a039e6800`).
+Der Treiber (`src/c128dd/din_treiber.s`, 524 Byte) stammt aus `EDITOR_C128_DIN/german.src`. Beim Original liegt er bei $FC80, dort stehen in DolphinDos26 die JiffyDOS-Routinen. In der DE-Fassung liegt er deshalb in der Lücke hinter dem Wedge ($E7C5–$E9D0, Tabellen auf Seite $E8). Eingehängt ist er wie beim deutschen Editor an fünf Stellen (`.ifdef DIN`): Sprungtabelle `scnkey` ($C012), CINT (`nat_init`, Tabellen-Init über `ascii_din`/`nat_scnkey`), Tastenabfrage in der Editorschleife und `keychk` in ed3 (`nat_keychk`). `tools/din_vergleich.py` assembliert den Treiber testweise bei $FC80 und vergleicht ihn byteweise mit 315078-03 (0 Abweichungen). Ohne `DIN` ist das ROM byte-gleich mit der bisherigen Fassung (MD5 `e0a1600c63ace1da02f9efba964ab291`).
 
 Für die richtige Darstellung von ä ö ü ß braucht der deutsche C128 sein deutsches Zeichensatz-ROM (315079-01); mit dem US-Zeichensatz erscheinen an diesen Stellen die US-Zeichen. In VICE liegt die ASCII/DIN-Taste auf F12.
 
@@ -196,8 +196,8 @@ Original-Kernal die Rasterzeile und legt das Ergebnis in `palnts` ($0A03) ab.
 |---|---|
 | DolphinDos26 parallel, blockweise | `LOADING DD: $bAAAA-$bAAAA` (b = Bank) |
 | Parallelkabel byteweise (`,8,2`, `$`) | `LOADING DD:` |
-| JiffyDOS-Schnellladen | `LOADING JF: $bAAAA-$bAAAA` |
-| JiffyDOS-Protokoll ohne Schnellladen (`,8,2`, `$`) | `LOADING JF:` |
+| JiffyDOS-Schnellladen | `LOADING JD: $bAAAA-$bAAAA` |
+| JiffyDOS-Protokoll ohne Schnellladen (`,8,2`, `$`) | `LOADING JD:` |
 | normal seriell / Burst | `LOADING` |
 
 Texte statt der Kassettenmeldungen in `f6b0_messages.s` (Offsets aller anderen
@@ -221,7 +221,8 @@ Im Direktmodus, wie bei DolphinDOS 3 und dem C64-Kernal DolphinDos26:
 | `@` | Fehlerkanal des Standardgeräts lesen und ausgeben |
 | `@befehl` | Befehl über Kanal 15 senden, danach den Status (z. B. `@I`, `@S:DATEI`, `@CD←`, `@CD:ORDNER`, `@N:NAME,ID`) |
 | `@$`, `@$:MUSTER` | Directory anzeigen, ohne das BASIC-Programm zu überschreiben (STOP bricht ab) |
-| `@8` … `@11` | Standardgerät wählen (nach dem Einschalten 8), gilt auch für `LOAD`/`SAVE` ohne Gerätenummer |
+| `@8` … `@19` | Standardgerät wählen (nach dem Einschalten 8), gilt auch für `LOAD`/`SAVE` ohne Gerätenummer |
+| CTRL-D | im Direktmodus zum nächsten vorhandenen Laufwerk wechseln (Geräte 8 bis 19) und die Gerätenummer anzeigen, wie bei JiffyDOS; die Prüfung schließt an jedem geprüften Laufwerk den Befehlskanal |
 | `"befehl"…` | wie `@befehl` (für C=F5 auf einer Directory-Zeile) |
 
 `dd_wedge_init` hängt sich beim BASIC-Kaltstart (aus `dd_einschalt`) in den

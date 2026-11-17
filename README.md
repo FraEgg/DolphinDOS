@@ -2,7 +2,7 @@
 
 # DolphinDos26
 
-**Drive firmware, C64 and C128 kernal and tools for the Commodore 1541, the 1541/1571 Switchless 8x Multi-Floppy-Speeder V3 (512 KB) in the 1541 and in the 1571 of the C128DCR, and the Commodore 64 Ultimate.**
+**Drive firmware, C64, C128 and VIC-20 kernal and tools for the Commodore 1541, the 1541/1571 Switchless 8x Multi-Floppy-Speeder V3 (512 KB) in the 1541 and in the 1571 of the C128DCR, and the Commodore 64 Ultimate.**
 
 **Language:** [English](#english) · [Deutsch](#deutsch)
 
@@ -36,7 +36,7 @@
 
 DolphinDos26 (DD26) is a further development of **DolphinDOS 3.0** by Günther Jilg and Jan Bubela. The number stands for the year 2026. It stays compatible in daily use with DolphinDOS 3.0: parallel transfer, track cache, the `@` and `X` commands, the 40-track format and the function keys work as before.
 
-The project consists of seven parts:
+The project consists of eight parts:
 
 | Part | What it does | Runs on |
 |---|---|---|
@@ -45,6 +45,7 @@ The project consists of seven parts:
 | **DolphinDos26DD2** | All functions of DolphinDos26, but with the parallel cable on VIA1 like DolphinDos26UL | 1541 with Switchless Multi-Speeder V3 |
 | **C64DolphinDos26** | C64 kernal that combines DolphinDOS parallel, JiffyDOS and standard serial | C64, C64 II, and C128 in C64 mode |
 | **C128DolphinDos26** | C128 kernal with the same protocols, an `@` wedge and the function keys of the C64 kernal | C128 in C128 mode |
+| **VIC20DolphinDos26** (new) | VIC-20 kernal with DolphinDOS parallel, JiffyDOS and standard serial, the `@` wedge and the function keys of the C64 kernal; PAL and NTSC | VIC-20 (VC20) |
 | **C1571DolphinDos26** | Drive firmware for the 1571 with all DolphinDos26 functions and double-sided disks | 1571 with 1571 Multi-Speeder V3 (external 1571 and C128DCR) |
 | **MS-Tools** | C64 programs for testing and copying | C64 mode, with the firmware above |
 
@@ -65,6 +66,8 @@ The project consists of seven parts:
 
 **C128:** For C128 mode use [`C128DolphinDos26-US.BIN`](rom/C128DolphinDos26-US.BIN) (16 KB, international and USA) or [`C128DolphinDos26-DE.BIN`](rom/C128DolphinDos26-DE.BIN) (16 KB, with the German DIN keyboard driver: the CAPS LOCK key is the ASCII/DIN key) in place of the kernal ROM 318020 (screen editor, Z80 part and kernal). For C64 mode the C128 has the same combined BASIC/kernal ROM 251913 as the C64 II, so `C64IIDolphinDos26.bin` fits there. Both work with all drive ROMs in the table above. In the 8-bank EPROM of the C128DCR kernal switcher (U32), only the upper half of each 64 KB bank is used: the C64 mode at `$8000`–`$BFFF` (`C64IIDolphinDos26.bin`) and the C128 kernal at `$C000`–`$FFFF` (`C128DolphinDos26-DE.BIN`); `$0000`–`$7FFF` stays free. The C128 BASIC is not in U32.
 
+**VIC20/VC20:** [`VIC20DolphinDos26PAL.bin`](rom/VIC20DolphinDos26PAL.bin) (8 KB, PAL) replaces the kernal ROM 901486-07, [`VIC20DolphinDos26NTSC.bin`](rom/VIC20DolphinDos26NTSC.bin) (8 KB, NTSC) the kernal ROM 901486-06. Both work with all drive ROMs in the table above, with JiffyDOS drives and with SD2IEC. A parallel cable for the C64 does not fit the VIC-20 unchanged: the wire from pin 8 of the user port must go to pin M. See the [manual](manuals/en/DolphinDos26_Manual.pdf), chapter “VIC20/VC20”, and the [VIC-20 notes](docs/en/vic20-kernal.md).
+
 > **The drive ROMs are not interchangeable.** DolphinDos26 transfers over the PIA of the Multi-Speeder, DolphinDos26UL and DolphinDos26DD2 over VIA1. With the wrong ROM the parallel transfer hangs.
 
 ## Features
@@ -79,20 +82,32 @@ The project consists of seven parts:
 ### C64DolphinDos26 kernal
 
 - Three protocols in one kernal: DolphinDOS parallel, JiffyDOS and standard serial. For each access it picks the fastest method the addressed device supports, without any switching.
-- Shows the transfer type while loading: `LOADING DD:` for DolphinDOS parallel, `LOADING JF:` for JiffyDOS.
+- Shows the transfer type while loading: `LOADING DD:` for DolphinDOS parallel, `LOADING JD:` for JiffyDOS.
 - Function keys for SD2IEC to change directories and disk images and to load directly from the directory.
 - `@8` to `@11` (in general `@0` to `@19`) set the default device for the `@` commands and for `LOAD`/`SAVE` without a device number.
+- CTRL-D changes to the next drive that is present (devices 8 to 19) and shows its number, as with JiffyDOS; F7 shows the directory.
 - Also tested with S-JiffyDOS 1541 (SJD41), an extension of the JiffyDOS ROM for the 1541 by Jochen Adler that the kernal addresses like a JiffyDOS drive. Further information: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
 - Saves and loads game states of programs with their own interrupt handler completely (for example Eye of the Beholder), which the original DolphinDOS 2/3 kernal aborts.
 
 ### C128DolphinDos26 kernal
 
 - The protocols of the C64 kernal in C128 mode: DolphinDOS parallel, JiffyDOS (also block-wise fast loading into any memory bank) and standard serial. Burst drives such as the 1571 keep the Commodore fast mode.
-- `LOADING DD:` / `LOADING JF:`, and below the BASIC boot message the DolphinDos26 lines with `PAL SYSTEM` or `NTSC SYSTEM`.
-- `@` wedge: `@` (status), `@command`, `@$` (directory without losing the program), `@8` to `@11` (default device, also for `LOAD`/`SAVE` without a device number).
+- `LOADING DD:` / `LOADING JD:`, and below the BASIC boot message the DolphinDos26 lines with `PAL SYSTEM` or `NTSC SYSTEM`.
+- `@` wedge: `@` (status), `@command`, `@$` (directory without losing the program), `@8` to `@19` (default device, also for `LOAD`/`SAVE` without a device number); CTRL-D changes to the next drive that is present.
 - Function keys as with the C64 kernal, including the SD2IEC keys on the C= level, so nothing has to be relearned when switching modes. F1 to F8 can still be changed with `KEY`.
 - Contains the Commodore fixes of 318020-05 that the original Dolphin C128 kernal lacks, for example `BOOT"file"`, CAPS LOCK Q and DMA into all memory banks.
 - Technical details: [docs/en/c128-kernal.md](docs/en/c128-kernal.md).
+
+### VIC20DolphinDos26 kernal (new)
+
+- The protocols of the C64 kernal on the VIC-20: DolphinDOS parallel (block transfer), JiffyDOS (also block-wise fast loading) and standard serial. On every access the kernal chooses the fastest method the device supports.
+- `LOADING DD:` / `LOADING JD:` with the address range, and a power-on screen with `DOLPHINDOS26  VIC-20` and `PAL` or `NTSC`.
+- `@` wedge as on the C64: `@` (status), `@command`, `@$` (directory without losing the program), `@8` to `@19` (default device, also for `LOAD`/`SAVE`/`VERIFY` without a device number); CTRL-D changes to the next drive that is present.
+- Function keys as with the C64 kernal, including the SD2IEC keys on the C= level; `&` restores them, `&"name"` loads your own assignment, `&*` brings back a program deleted with `NEW`.
+- `SYS$hex`, additional CTRL keys of the editor (delete parts of a line, tabulator, key repeat, screen print), halting the scrolling with CTRL and C=, reset keys, `VERIFY` stops at the first difference.
+- The parallel cable uses VIA 1 at the user port: data on the same pins as on the C64, the acknowledge line on pin M instead of pin 8.
+- Cassette and kernal RS-232 are removed. Not everything of the C64 kernal fits into the 8 KB; the differences are listed in the notes.
+- Technical details: [docs/en/vic20-kernal.md](docs/en/vic20-kernal.md).
 
 ### C1571DolphinDos26 (1571 Multi-Speeder V3, C128DCR)
 
@@ -192,6 +207,8 @@ C128DCR with 1571 Multi-Speeder and C1571DolphinDos26:
 
 **C128:** Program `C128DolphinDos26-US.BIN` or, for the German keyboard, `C128DolphinDos26-DE.BIN` (16 KB) and fit it in place of the kernal ROM 318020. For C64 mode, `C64IIDolphinDos26.bin` replaces the ROM 251913.
 
+**VIC20/VC20:** Program `VIC20DolphinDos26PAL.bin` (PAL) or `VIC20DolphinDos26NTSC.bin` (NTSC), 8 KB each, and fit it in place of the kernal ROM 901486-07 (PAL) or 901486-06 (NTSC). The original ROM is a type 2364 with 24 pins; a 2764 or 27C64 EPROM needs an adapter socket. For the parallel cable move the wire from pin 8 of the user port to pin M.
+
 **C128DCR with 1571 Multi-Speeder V3:** Put `C1571_DOLPHINDOS26.bin` (64 KB) at offset `$30000` of the 512 KB image of the 1571 Multi-Speeder EPROM (bank 4), program a 29F040 (alternatively 27C040 or SST39SF040) and fit it. Switch with `@I:4@RNROM`; the drive then reports `73,DOLPHINDOS26 1571`. On the C128 use `C128DolphinDos26-US.BIN` or `C128DolphinDos26-DE.BIN` and, for C64 mode, `C64IIDolphinDos26.bin`.
 
 **External 1571 with 1571 Multi-Speeder V3:** Program the EPROM template `C1571_29F040.BIN` from the [hardware repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) (CBM DOS 310654-05, DolphinDOS 3 in bank 3, DolphinDos26 in bank 4), remove the DOS ROM of the 1571 and connect CN1 to the user port with the parallel cable. Switch with `@I:4@RNROM`. On the C64 use `C64DolphinDos26.bin` (C64 II: `C64IIDolphinDos26.bin`), on the C128 the C128 kernal as above.
@@ -210,11 +227,12 @@ Full steps and troubleshooting are in the manuals.
 - DolphinDos26 uses illegal NMOS 6502 instructions like DolphinDOS, so it does not run on a WDC 65C02.
 - C1571DolphinDos26 always runs at 2 MHz like the original DolphinDOS 3. Enter `@X-` before loading programs with their own fast loader, or switch to the Commodore ROM with `@I:1@RNROM`. MS-15SECCOPY sets a 1571 with DolphinDOS or SpeedDos26 to 1 MHz itself for BACKUP and VERIFY; MS-NIBCOPY detects the 1571 and loads its own drive code (1 MHz for disk access, index hole).
 - The C128 kernal has no tape and no kernal RS-232 routines: OPEN to device 1 or 2 reports ILLEGAL DEVICE. Programs with their own RS-232 driver are not affected. `LOAD"name"` without a device number loads from the default device to the start of BASIC, as usual on the C128.
+- The VIC-20 kernal has no tape and no kernal RS-232 routines: devices 1 and 2 report ILLEGAL DEVICE NUMBER. A parallel cable for the C64 does not fit unchanged (pin M instead of pin 8). Some functions of the C64 kernal are missing for lack of space, see [docs/en/vic20-kernal.md](docs/en/vic20-kernal.md).
 
 ## What is in this repository?
 
 ```
-rom/             Drive ROMs, C64 and C128 kernal
+rom/             Drive ROMs, C64, C128 and VIC-20 kernal
 manuals/en, de   Manuals as PDF
 ms-tools/        ms-tools.d64, ms-15seccopy.d64 and the single programs
 docs/en, de      Technical notes (firmware, kernals, MS-Tools)
@@ -223,19 +241,19 @@ tools/           Maintenance script for this repository
 CHECKSUMS.*      MD5 and SHA-256 of all published files
 ```
 
-The source code is **not** part of this repository. The manuals and technical notes mention folders such as `Builds`, `dd25`, `C64DD26`, `C128DD26`, `C1571DD26` and `MS-Tools`; these are the development folders. See [docs/README.md](docs/README.md).
+The source code is **not** part of this repository. The manuals and technical notes mention folders such as `Builds`, `dd25`, `C64DD26`, `C128DD26`, `C1571DD26`, `VIC20DD26` and `MS-Tools`; these are the development folders. See [docs/README.md](docs/README.md).
 
-The complete 512 KB EPROM image named in the manuals is **not** included, because it also holds other firmware, including JiffyDOS drive firmware. Build your own image from your own banks.
+The 512 KB EPROM templates named in the manuals are not in this repository but in the hardware repositories: `C1541_29F040.BIN` for the [1541](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1541), `C1571_29F040.BIN` for the [external 1571](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) and `C1571_C128DCR_29F040.BIN` for the [C128DCR](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-C128DCR-1571). The browser tool MS-ROM-Builder there assembles your own image from your own banks.
 
 Verify your download with `sha256sum -c CHECKSUMS.sha256` or `md5sum -c CHECKSUMS.md5`.
 
 ## JiffyDOS licence: please check
 
-The C64 and the C128 kernal contain JiffyDOS transfer routines that are instruction-identical to a JiffyDOS kernal (C64: JiffyDOS sd2iec kernal, C128: JiffyDOS C128 kernal). The JiffyDOS drive firmware is not included. Jim Brain of RETRO Innovations, which holds the JiffyDOS licence rights, confirmed that publishing the DolphinDos26 kernal on GitHub is fine. As he describes it, code that implements the same transfer behaviour without being an exact copy needs no licence. If the transfer code is the same, as it is here, he believes the end user would need one.
+The C64, the C128 and the VIC-20 kernals contain JiffyDOS transfer routines that are instruction-identical to a JiffyDOS kernal (C64: JiffyDOS sd2iec kernal, C128: JiffyDOS C128 kernal, VIC-20: JiffyDOS VIC-20 kernal). The JiffyDOS drive firmware is not included. Jim Brain of RETRO Innovations, which holds the JiffyDOS licence rights, confirmed that publishing the DolphinDos26 kernal on GitHub is fine. As he describes it, code that implements the same transfer behaviour without being an exact copy needs no licence. If the transfer code is the same, as it is here, he believes the end user would need one.
 
 **Please check for yourself whether your use calls for an official JiffyDOS licence:** <https://www.jiffydos.com>
 
-Details: [docs/en/c64-kernal.md](docs/en/c64-kernal.md), [docs/en/c128-kernal.md](docs/en/c128-kernal.md).
+Details: [docs/en/c64-kernal.md](docs/en/c64-kernal.md), [docs/en/c128-kernal.md](docs/en/c128-kernal.md), [docs/en/vic20-kernal.md](docs/en/vic20-kernal.md).
 
 ## Credits
 
@@ -269,7 +287,7 @@ Terms of use: [LICENSE.md](LICENSE.md). JiffyDOS is licensed today via Jim Brain
 
 DolphinDos26 (DD26) ist eine Weiterentwicklung von **DolphinDOS 3.0** von Günther Jilg und Jan Bubela. Die Zahl steht für das Jahr 2026. In der Bedienung bleibt es kompatibel zu DolphinDOS 3.0: Parallelübertragung, Track-Cache, die `@`- und `X`-Befehle, das 40-Spur-Format und die Funktionstasten funktionieren wie gewohnt.
 
-Das Projekt besteht aus sieben Teilen:
+Das Projekt besteht aus acht Teilen:
 
 | Teil | Aufgabe | Läuft auf |
 |---|---|---|
@@ -278,6 +296,7 @@ Das Projekt besteht aus sieben Teilen:
 | **DolphinDos26DD2** | Alle Funktionen von DolphinDos26, aber mit dem Parallelkabel am VIA1 wie DolphinDos26UL | 1541 mit Switchless Multi-Speeder V3 |
 | **C64DolphinDos26** | C64-Kernal, der DolphinDOS parallel, JiffyDOS und seriell vereint | C64, C64 II und C128 im C64-Modus |
 | **C128DolphinDos26** | C128-Kernal mit denselben Protokollen, `@`-Wedge und den Funktionstasten des C64-Kernals | C128 im C128-Modus |
+| **VIC20DolphinDos26** (neu) | VIC-20-Kernal mit DolphinDOS parallel, JiffyDOS und seriell, `@`-Wedge und den Funktionstasten des C64-Kernals; PAL und NTSC | VIC-20 (VC20) |
 | **C1571DolphinDos26** | Laufwerks-Firmware für die 1571 mit allen Funktionen von DolphinDos26 und doppelseitigen Disketten | 1571 mit 1571 Multi-Speeder V3 (externe 1571 und C128DCR) |
 | **MS-Tools** | C64-Programme zum Prüfen und Kopieren | C64-Modus, mit der Firmware oben |
 
@@ -296,6 +315,8 @@ Das Projekt besteht aus sieben Teilen:
 
 **C128:** Für den C128-Modus [`C128DolphinDos26-US.BIN`](rom/C128DolphinDos26-US.BIN) (16 KB, international und USA) oder [`C128DolphinDos26-DE.BIN`](rom/C128DolphinDos26-DE.BIN) (16 KB, mit deutschem DIN-Tastaturtreiber: die CAPS-LOCK-Taste ist die ASCII/DIN-Taste) anstelle des Kernal-ROMs 318020 verwenden (Bildschirmeditor, Z80-Teil und Kernal). Für den C64-Modus hat der C128 dasselbe kombinierte BASIC-/Kernal-ROM 251913 wie der C64 II, dort passt also `C64IIDolphinDos26.bin`. Beide arbeiten mit allen Laufwerks-ROMs der Tabelle oben. Im 8-Bank-EPROM des Kernal-Switchers (U32) im C128DCR wird je 64-KB-Bank nur die obere Hälfte genutzt: der C64-Modus bei `$8000`–`$BFFF` (`C64IIDolphinDos26.bin`) und der C128-Kernal bei `$C000`–`$FFFF` (`C128DolphinDos26-DE.BIN`); `$0000`–`$7FFF` bleibt frei. Das C128-BASIC liegt nicht in U32.
 
+**VIC20/VC20:** [`VIC20DolphinDos26PAL.bin`](rom/VIC20DolphinDos26PAL.bin) (8 KB, PAL) ersetzt das Kernal-ROM 901486-07, [`VIC20DolphinDos26NTSC.bin`](rom/VIC20DolphinDos26NTSC.bin) (8 KB, NTSC) das Kernal-ROM 901486-06. Beide arbeiten mit allen Laufwerks-ROMs der Tabelle oben, mit JiffyDOS-Laufwerken und mit SD2IEC. Ein Parallelkabel für den C64 passt am VIC-20 nicht unverändert: die Ader von Pin 8 des Userports muss an Pin M liegen. Siehe [Handbuch](manuals/de/DolphinDos26_Handbuch.pdf), Kapitel „VIC20/VC20“, und die [VIC-20-Notizen](docs/de/vic20-kernal.md).
+
 > **Die Laufwerks-ROMs sind nicht austauschbar.** DolphinDos26 überträgt über den PIA des Multi-Speeders, DolphinDos26UL und DolphinDos26DD2 über den VIA1. Mit dem falschen ROM hängt die Parallelübertragung.
 
 ## Funktionen
@@ -310,20 +331,32 @@ Das Projekt besteht aus sieben Teilen:
 ### Kernal C64DolphinDos26
 
 - Drei Protokolle in einem Kernal: DolphinDOS parallel, JiffyDOS und seriell. Bei jedem Zugriff wählt er das schnellste Verfahren, das das angesprochene Gerät beherrscht, ohne Umschalten.
-- Zeigt beim Laden die Übertragungsart an: `LOADING DD:` für DolphinDOS parallel, `LOADING JF:` für JiffyDOS.
+- Zeigt beim Laden die Übertragungsart an: `LOADING DD:` für DolphinDOS parallel, `LOADING JD:` für JiffyDOS.
 - Funktionstasten für SD2IEC zum Wechseln von Verzeichnissen und Disk-Images und zum Laden direkt aus dem Directory.
 - `@8` bis `@11` (allgemein `@0` bis `@19`) stellen das Standardgerät für die `@`-Befehle und für `LOAD`/`SAVE` ohne Gerätenummer ein.
+- CTRL-D wechselt zum nächsten vorhandenen Laufwerk (Geräte 8 bis 19) und zeigt dessen Nummer an, wie bei JiffyDOS; das Directory zeigt F7.
 - Auch mit S-JiffyDOS 1541 (SJD41) getestet, einer Erweiterung des JiffyDOS-ROMs für die 1541 von Jochen Adler, die der Kernal wie ein JiffyDOS-Laufwerk anspricht. Weitere Informationen: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
 - Speichert und lädt Spielstände von Programmen mit eigenem Interrupt vollständig (z. B. Eye of the Beholder), die der Original-Kernal von DolphinDOS 2/3 abbricht.
 
 ### Kernal C128DolphinDos26
 
 - Die Protokolle des C64-Kernals im C128-Modus: DolphinDOS parallel, JiffyDOS (auch blockweises Schnellladen in jede Speicherbank) und seriell. Burst-Laufwerke wie die 1571 behalten den Commodore-Schnellmodus.
-- `LOADING DD:` / `LOADING JF:` und unter der BASIC-Einschaltmeldung die DolphinDos26-Zeilen mit `PAL SYSTEM` bzw. `NTSC SYSTEM`.
-- `@`-Wedge: `@` (Status), `@befehl`, `@$` (Directory ohne Programmverlust), `@8` bis `@11` (Standardgerät, auch für `LOAD`/`SAVE` ohne Gerätenummer).
+- `LOADING DD:` / `LOADING JD:` und unter der BASIC-Einschaltmeldung die DolphinDos26-Zeilen mit `PAL SYSTEM` bzw. `NTSC SYSTEM`.
+- `@`-Wedge: `@` (Status), `@befehl`, `@$` (Directory ohne Programmverlust), `@8` bis `@19` (Standardgerät, auch für `LOAD`/`SAVE` ohne Gerätenummer); CTRL-D wechselt zum nächsten vorhandenen Laufwerk.
 - Funktionstasten wie beim C64-Kernal, einschließlich der SD2IEC-Tasten auf der C=-Ebene, damit man beim Wechsel des Modus nicht umlernen muss. F1 bis F8 lassen sich weiter mit `KEY` ändern.
 - Enthält die Commodore-Korrekturen von 318020-05, die dem Original-Dolphin-C128-Kernal fehlen, zum Beispiel `BOOT"datei"`, CAPS-LOCK-Q und DMA in alle Speicherbänke.
 - Technische Einzelheiten: [docs/de/c128-kernal.md](docs/de/c128-kernal.md).
+
+### Kernal VIC20DolphinDos26 (neu)
+
+- Die Protokolle des C64-Kernals am VIC-20: DolphinDOS parallel (Blockübertragung), JiffyDOS (auch blockweises Schnellladen) und seriell. Der Kernal wählt bei jedem Zugriff das schnellste Verfahren, das das Gerät beherrscht.
+- `LOADING DD:` / `LOADING JD:` mit dem Adressbereich und ein Einschaltbild mit `DOLPHINDOS26  VIC-20` und `PAL` bzw. `NTSC`.
+- `@`-Wedge wie am C64: `@` (Status), `@befehl`, `@$` (Directory ohne Programmverlust), `@8` bis `@19` (Standardgerät, auch für `LOAD`/`SAVE`/`VERIFY` ohne Gerätenummer); CTRL-D wechselt zum nächsten vorhandenen Laufwerk.
+- Funktionstasten wie beim C64-Kernal, einschließlich der SD2IEC-Tasten auf der C=-Ebene; `&` stellt sie wieder her, `&"name"` lädt eine eigene Belegung, `&*` holt ein mit `NEW` gelöschtes Programm zurück.
+- `SYS$hex`, zusätzliche CTRL-Tasten des Editors (Zeilenteile löschen, Tabulator, Tastenwiederholung, Bildschirmausdruck), Scrollen anhalten mit CTRL und C=, Reset-Tasten, `VERIFY` hört beim ersten Unterschied auf.
+- Das Parallelkabel nutzt die VIA 1 am Userport: Daten an denselben Pins wie am C64, die Quittungsleitung an Pin M statt Pin 8.
+- Kassette und Kernal-RS-232 sind entfernt. Nicht alles aus dem C64-Kernal passt in die 8 KB; die Unterschiede stehen in den Notizen.
+- Technische Einzelheiten: [docs/de/vic20-kernal.md](docs/de/vic20-kernal.md).
 
 ### C1571DolphinDos26 (1571 Multi-Speeder V3, C128DCR)
 
@@ -416,6 +449,8 @@ C128DCR mit 1571 Multi-Speeder und C1571DolphinDos26:
 
 **C128:** `C128DolphinDos26-US.BIN` oder für die deutsche Tastatur `C128DolphinDos26-DE.BIN` (16 KB) brennen und anstelle des Kernal-ROMs 318020 einsetzen. Für den C64-Modus ersetzt `C64IIDolphinDos26.bin` das ROM 251913.
 
+**VIC20/VC20:** `VIC20DolphinDos26PAL.bin` (PAL) oder `VIC20DolphinDos26NTSC.bin` (NTSC), je 8 KB, brennen und anstelle des Kernal-ROMs 901486-07 (PAL) bzw. 901486-06 (NTSC) einsetzen. Das Original-ROM ist ein Typ 2364 mit 24 Pins; ein EPROM 2764 oder 27C64 braucht einen Adaptersockel. Für das Parallelkabel die Ader von Pin 8 des Userports an Pin M legen.
+
 **C128DCR mit 1571 Multi-Speeder V3:** `C1571_DOLPHINDOS26.bin` (64 KB) an Offset `$30000` des 512-KB-Abbilds des 1571-Multi-Speeder-EPROMs legen (Bank 4), einen 29F040 (alternativ 27C040 oder SST39SF040) brennen und einsetzen. Umschalten mit `@I:4@RNROM`; das Laufwerk meldet dann `73,DOLPHINDOS26 1571`. Am C128 `C128DolphinDos26-US.BIN` oder `C128DolphinDos26-DE.BIN` und für den C64-Modus `C64IIDolphinDos26.bin` verwenden.
 
 **Externe 1571 mit 1571 Multi-Speeder V3:** Die EPROM-Vorlage `C1571_29F040.BIN` aus dem [Hardware-Repository](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) brennen (CBM-DOS 310654-05, DolphinDOS 3 in Bank 3, DolphinDos26 in Bank 4), das DOS-ROM der 1571 entfernen und CN1 mit dem Parallelkabel an den Userport anschließen. Umschalten mit `@I:4@RNROM`. Am C64 `C64DolphinDos26.bin` (C64 II: `C64IIDolphinDos26.bin`), am C128 den C128-Kernal wie oben verwenden.
@@ -434,11 +469,12 @@ Alle Schritte und die Fehlersuche stehen in den Handbüchern.
 - DolphinDos26 verwendet wie DolphinDOS illegale NMOS-6502-Befehle und läuft daher nicht auf einer WDC 65C02.
 - C1571DolphinDos26 läuft wie das originale DolphinDOS 3 immer mit 2 MHz. Vor dem Laden von Programmen mit eigenem Schnelllader `@X-` eingeben oder mit `@I:1@RNROM` auf das Commodore-ROM umschalten. MS-15SECCOPY stellt eine 1571 mit DolphinDOS oder SpeedDos26 für BACKUP und VERIFY selbst auf 1 MHz; MS-NIBCOPY erkennt die 1571 und lädt einen eigenen Laufwerkscode (1 MHz für den Diskettenzugriff, Indexloch).
 - Der C128-Kernal hat keine Kassetten- und keine Kernal-RS-232-Routinen: OPEN auf Gerät 1 oder 2 meldet ILLEGAL DEVICE. Programme mit eigenem RS-232-Treiber sind nicht betroffen. `LOAD"name"` ohne Gerätenummer lädt vom Standardgerät an den BASIC-Anfang, wie beim C128 üblich.
+- Der VIC-20-Kernal hat keine Kassetten- und keine Kernal-RS-232-Routinen: Gerät 1 und 2 melden ILLEGAL DEVICE NUMBER. Ein Parallelkabel für den C64 passt nicht unverändert (Pin M statt Pin 8). Einige Funktionen des C64-Kernals fehlen aus Platzgründen, siehe [docs/de/vic20-kernal.md](docs/de/vic20-kernal.md).
 
 ## Was liegt in diesem Repository?
 
 ```
-rom/             Laufwerks-ROMs, C64- und C128-Kernal
+rom/             Laufwerks-ROMs, C64-, C128- und VIC-20-Kernal
 manuals/en, de   Handbücher als PDF
 ms-tools/        ms-tools.d64, ms-15seccopy.d64 und die einzelnen Programme
 docs/en, de      Technische Notizen (Firmware, Kernals, MS-Tools)
@@ -447,19 +483,19 @@ tools/           Pflegeskript für dieses Repository
 CHECKSUMS.*      MD5 und SHA-256 aller veröffentlichten Dateien
 ```
 
-Der Quelltext ist **nicht** Teil dieses Repositorys. Handbücher und technische Notizen nennen Ordner wie `Builds`, `dd25`, `C64DD26`, `C128DD26`, `C1571DD26` und `MS-Tools`; das sind die Entwicklungsordner. Siehe [docs/README.md](docs/README.md).
+Der Quelltext ist **nicht** Teil dieses Repositorys. Handbücher und technische Notizen nennen Ordner wie `Builds`, `dd25`, `C64DD26`, `C128DD26`, `C1571DD26`, `VIC20DD26` und `MS-Tools`; das sind die Entwicklungsordner. Siehe [docs/README.md](docs/README.md).
 
-Das in den Handbüchern genannte komplette 512-KB-EPROM-Abbild ist **nicht** enthalten, weil es auch andere Firmware enthält, darunter JiffyDOS-Laufwerksfirmware. Stelle dein Abbild aus deinen eigenen Bänken zusammen.
+Die in den Handbüchern genannten 512-KB-EPROM-Vorlagen liegen nicht in diesem Repository, sondern in den Hardware-Repositorys: `C1541_29F040.BIN` für die [1541](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1541), `C1571_29F040.BIN` für die [externe 1571](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) und `C1571_C128DCR_29F040.BIN` für den [C128DCR](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-C128DCR-1571). Mit dem Browser-Tool MS-ROM-Builder dort lässt sich ein eigenes Abbild aus eigenen Bänken zusammenstellen.
 
 Download prüfen mit `sha256sum -c CHECKSUMS.sha256` oder `md5sum -c CHECKSUMS.md5`.
 
 ## JiffyDOS-Lizenz: bitte prüfen
 
-Der C64- und der C128-Kernal enthalten JiffyDOS-Übertragungsroutinen, die befehlsgleich aus einem JiffyDOS-Kernal stammen (C64: JiffyDOS-sd2iec-Kernal, C128: JiffyDOS-C128-Kernal). Die JiffyDOS-Firmware für das Laufwerk ist nicht enthalten. Jim Brain von RETRO Innovations, das die JiffyDOS-Lizenzrechte hält, hat die Veröffentlichung des DolphinDos26-Kernals auf GitHub erlaubt. Nach seiner Beschreibung ist für Code, der dasselbe Übertragungsverhalten umsetzt, aber keine genaue Kopie ist, keine Lizenz nötig. Ist der Übertragungscode gleich, wie hier, wäre nach seiner Einschätzung beim Endnutzer eine Lizenz erforderlich.
+Der C64-, der C128- und der VIC-20-Kernal enthalten JiffyDOS-Übertragungsroutinen, die befehlsgleich aus einem JiffyDOS-Kernal stammen (C64: JiffyDOS-sd2iec-Kernal, C128: JiffyDOS-C128-Kernal, VIC-20: JiffyDOS-VIC-20-Kernal). Die JiffyDOS-Firmware für das Laufwerk ist nicht enthalten. Jim Brain von RETRO Innovations, das die JiffyDOS-Lizenzrechte hält, hat die Veröffentlichung des DolphinDos26-Kernals auf GitHub erlaubt. Nach seiner Beschreibung ist für Code, der dasselbe Übertragungsverhalten umsetzt, aber keine genaue Kopie ist, keine Lizenz nötig. Ist der Übertragungscode gleich, wie hier, wäre nach seiner Einschätzung beim Endnutzer eine Lizenz erforderlich.
 
 **Bitte prüfe selbst, ob du wegen der Nutzung eine offizielle JiffyDOS-Lizenz erwerben solltest:** <https://www.jiffydos.com>
 
-Einzelheiten: [docs/de/c64-kernal.md](docs/de/c64-kernal.md), [docs/de/c128-kernal.md](docs/de/c128-kernal.md).
+Einzelheiten: [docs/de/c64-kernal.md](docs/de/c64-kernal.md), [docs/de/c128-kernal.md](docs/de/c128-kernal.md), [docs/de/vic20-kernal.md](docs/de/vic20-kernal.md).
 
 ## Dank
 

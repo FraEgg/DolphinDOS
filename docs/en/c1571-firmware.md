@@ -155,7 +155,7 @@ Real time, 35-track disk or 30 KB file:
 
     make            # build the bank + list the differences to DD3-1571
     make bank       # build/dd26_1571.bin (64 KB)
-    make rom        # build/C1571_AM27C040_DD26.bin (512 KB, bank 4 replaced)
+    make rom        # local 512 KB EPROM image in build/ (bank 4 replaced)
     make builds     # bank as ../Builds/C1571_DOLPHINDOS26.bin (with MD5)
 
 The reconstruction itself is byte-identical at tag `referenz-2026-11-10`

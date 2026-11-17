@@ -41,7 +41,7 @@ Die Routinen stammen befehlsgleich aus dem JiffyDOS-sd2iec-Kernal
 (`../C64JiffySD2IEC`). `tools/vergleich_jiffy.py` prüft das, dazu die
 Seitengrenzen in den zeitkritischen Abschnitten.
 
-**Getestet mit S-JiffyDOS 1541:** Der Kernal ist auch mit S-JiffyDOS 1541 (SJD41) getestet. S-JiffyDOS 1541 von Jochen Adler ist eine Erweiterung des JiffyDOS-ROMs für die 1541. Zum Computer hin benutzt es die Übertragungsroutinen von JiffyDOS; der Kernal spricht es deshalb wie ein JiffyDOS-Laufwerk an (Anzeige `LOADING JF:`). Im Laufwerk beschleunigt es zusätzlich Laden, Speichern, Löschen und Validate und bringt 40 Spuren, Dateischutz und einen erweiterten Status mit. Weitere Informationen: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
+**Getestet mit S-JiffyDOS 1541:** Der Kernal ist auch mit S-JiffyDOS 1541 (SJD41) getestet. S-JiffyDOS 1541 von Jochen Adler ist eine Erweiterung des JiffyDOS-ROMs für die 1541. Zum Computer hin benutzt es die Übertragungsroutinen von JiffyDOS; der Kernal spricht es deshalb wie ein JiffyDOS-Laufwerk an (Anzeige `LOADING JD:`). Im Laufwerk beschleunigt es zusätzlich Laden, Speichern, Löschen und Validate und bringt 40 Spuren, Dateischutz und einen erweiterten Status mit. Weitere Informationen: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
 
 | Routine | Adresse | Zweck |
 |---|---|---|
@@ -180,6 +180,7 @@ mit `FREI:` und dem Label `frei_xxxx` markiert und mit `$AA` gefüllt.
 
 Geändertes Verhalten:
 - `@10` bis `@19` wählen das Standardgerät zweistellig (`dd_geraet`: Befehl aus genau zwei Zeichen, erstes `1`, zweites eine Ziffer); eine einzelne Ziffer wirkt wie bisher. Test: `python3 tests/test_geraet.py` (Laufwerke auf Gerät 8, 10 und 11).
+- CTRL-D wechselt im Direktmodus zum nächsten vorhandenen Laufwerk (Geräte 8 bis 19, danach wieder 8) und zeigt die Gerätenummer an, wie bei JiffyDOS (`dd_naechstes`); vorher zeigte CTRL-D das Directory, das bleibt auf F7. Geprüft wird mit LISTEN, Sekundäradresse `$EF` und UNLISTEN; das schließt an jedem geprüften Laufwerk den Befehlskanal und damit dort offene Dateien.
 - `SYS 0` und BRK gehen über den BRK-Vektor $0316, Standard ist der BASIC-Warmstart.
 - CTRL + Reset/RESTORE hat keine Funktion mehr.
 - Farben wie im Original-C64-ROM: Rahmen $0E, Hintergrund $06, Text $0E (Dolphin:
@@ -209,8 +210,8 @@ Geändertes Verhalten:
   |---|---|
   | DolphinDos26 parallel, blockweise | `LOADING DD: $0801-$xxxx` |
   | Parallelkabel byteweise (`,8,2`, `$`) | `LOADING DD:` |
-  | JiffyDOS-Schnellladen | `LOADING JF: $0801-$xxxx` |
-  | JiffyDOS-Protokoll ohne Schnellladen (`,8,2`, `$`) | `LOADING JF:` |
+  | JiffyDOS-Schnellladen | `LOADING JD: $0801-$xxxx` |
+  | JiffyDOS-Protokoll ohne Schnellladen (`,8,2`, `$`) | `LOADING JD:` |
   | normal seriell | `LOADING` |
 
   Texte `ms_jf`/`ms_dd`/`ms_dd_adr` ($F0D8–$F0E6, statt der Kassettentexte

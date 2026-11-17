@@ -154,7 +154,7 @@ Echtzeit, 35-Spur-Diskette bzw. 30-KB-Datei:
 
     make            # Bank bauen + Abweichungen zu DD3-1571 auflisten
     make bank       # build/dd26_1571.bin (64 KB)
-    make rom        # build/C1571_AM27C040_DD26.bin (512 KB, Bank 4 ersetzt)
+    make rom        # lokales 512-KB-EPROM-Abbild in build/ (Bank 4 ersetzt)
     make builds     # Bank als ../Builds/C1571_DOLPHINDOS26.bin (mit MD5)
 
 Die Rekonstruktion selbst ist mit Tag `referenz-2026-11-10` byte-identisch

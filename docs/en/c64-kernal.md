@@ -41,7 +41,7 @@ The routines are taken instruction-identically from the JiffyDOS sd2iec kernal
 (`../C64JiffySD2IEC`). `tools/vergleich_jiffy.py` checks this, along with the
 page boundaries in the time-critical sections.
 
-**Tested with S-JiffyDOS 1541:** The kernal has also been tested with S-JiffyDOS 1541 (SJD41). S-JiffyDOS 1541 by Jochen Adler is an extension of the JiffyDOS ROM for the 1541. Towards the computer it uses the transfer routines of JiffyDOS; the kernal therefore addresses it like a JiffyDOS drive (display `LOADING JF:`). Inside the drive it additionally speeds up loading, saving, scratching and validating and adds 40 tracks, file protection and an extended status. Further information: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
+**Tested with S-JiffyDOS 1541:** The kernal has also been tested with S-JiffyDOS 1541 (SJD41). S-JiffyDOS 1541 by Jochen Adler is an extension of the JiffyDOS ROM for the 1541. Towards the computer it uses the transfer routines of JiffyDOS; the kernal therefore addresses it like a JiffyDOS drive (display `LOADING JD:`). Inside the drive it additionally speeds up loading, saving, scratching and validating and adds 40 tracks, file protection and an extended status. Further information: [S-JIFFYDOS 1541 (funet.fi / zimmers.net)](https://bio.nic.funet.fi/pub/cbm/c64/diskutil/misc/s-jiffydos1541.html), [Commodore News: SJD41 (2013)](https://www.commodore-news.com/news/item/2755/en/mobile), [RetroTechCollection: JiffyDOS Kernal Upgrade](https://wiki.retrotechcollection.com/JiffyDOS_Kernal_Upgrade).
 
 | Routine | Address | Purpose |
 |---|---|---|
@@ -165,6 +165,7 @@ marked with `FREI:` and the label `frei_xxxx` and filled with `$AA`.
 
 Changed behavior:
 - `@10` to `@19` select the default device with two digits (`dd_geraet`: a command of exactly two characters, the first `1`, the second a digit); a single digit works as before. Test: `python3 tests/test_geraet.py` (drives on devices 8, 10 and 11).
+- CTRL-D changes in direct mode to the next drive that is present (devices 8 to 19, then 8 again) and shows the device number, as with JiffyDOS (`dd_naechstes`); before, CTRL-D showed the directory, which stays on F7. The check uses LISTEN, secondary address `$EF` and UNLISTEN; this closes the command channel on every drive that is checked and with it the files open there.
 - `SYS 0` and BRK go through the BRK vector $0316, the default is the BASIC warm start.
 - CTRL + Reset/RESTORE no longer has any function.
 - Colors as in the original C64 ROM: border $0E, background $06, text $0E (Dolphin:
@@ -194,8 +195,8 @@ Changed behavior:
   |---|---|
   | DolphinDos26 parallel, block-wise | `LOADING DD: $0801-$xxxx` |
   | parallel cable byte-wise (`,8,2`, `$`) | `LOADING DD:` |
-  | JiffyDOS fast loading | `LOADING JF: $0801-$xxxx` |
-  | JiffyDOS protocol without fast loading (`,8,2`, `$`) | `LOADING JF:` |
+  | JiffyDOS fast loading | `LOADING JD: $0801-$xxxx` |
+  | JiffyDOS protocol without fast loading (`,8,2`, `$`) | `LOADING JD:` |
   | normal serial | `LOADING` |
 
   Texts `ms_jf`/`ms_dd`/`ms_dd_adr` ($F0D8–$F0E6, instead of the cassette texts

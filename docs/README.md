@@ -8,6 +8,7 @@
 | Firmware notes, MS-Addon-API / Firmware-Notizen | [en](en/firmware-source-notes.md) | [de](de/firmware-source-notes.md) |
 | C64 kernal, JiffyDOS provenance / C64-Kernal, JiffyDOS-Herkunft | [en](en/c64-kernal.md) | [de](de/c64-kernal.md) |
 | C128 kernal, JiffyDOS provenance / C128-Kernal, JiffyDOS-Herkunft | [en](en/c128-kernal.md) | [de](de/c128-kernal.md) |
+| VIC-20 kernal (VIC20/VC20), JiffyDOS provenance / VIC-20-Kernal (VIC20/VC20), JiffyDOS-Herkunft | [en](en/vic20-kernal.md) | [de](de/vic20-kernal.md) |
 | 1571 firmware C1571DolphinDos26, 2/1 MHz and X- / 1571-Firmware, 2/1 MHz und X- | [en](en/c1571-firmware.md) | [de](de/c1571-firmware.md) |
 | MS-Tools | [en](en/ms-tools.md) | [de](de/ms-tools.md) |
 

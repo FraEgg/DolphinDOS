@@ -20,14 +20,13 @@ intern ab 0 und nennen dieselbe Bank deshalb „Bank 7“.
     make rom        # zusätzlich das 512-KB-EPROM-Abbild für den Multi-Speeder
     make builds     # beides bauen und nach ../Builds kopieren
 
-`make rom` nimmt das Referenz-EPROM
-`ref/AM27C040-…+7DolphinDos25_v3.3.bin` (MD5
-`86ca5649c56219aeeff1dc6b7768eb35`), übernimmt die Bänke 1–7 unverändert und
-ersetzt Bank 8 (`$70000`) durch den Build. Ergebnis:
-`build/AM27C040-…+7DolphinDos26_v3.3.bin`.
+`make rom` nimmt ein lokales Referenz-EPROM-Abbild aus `ref/` (512 KB, nicht Teil des
+Release), übernimmt die Bänke 1–7 unverändert und ersetzt Bank 8 (`$70000`) durch den
+Build. Das Ergebnis liegt in `build/` und bleibt lokal. Veröffentlicht wird stattdessen
+die Vorlage `C1541_29F040.BIN` im Hardware-Projekt der 1541.
 
 `make builds` legt die fertigen ROMs im Projektverzeichnis `../Builds` ab:
-`1541DolphinDos26.bin` (64 KB, Bank 8), das 512-KB-EPROM-Abbild,
+`1541DolphinDos26.bin` (64 KB, Bank 8), das lokale 512-KB-EPROM-Abbild,
 `C1541_DOLPHINDOS26UL.bin` und `C1541_DOLPHINDOS26DD2.bin` (siehe unten). Vorhandene Dateien dort werden
 überschrieben (`make builds BUILDS=…` für ein anderes Ziel).
 

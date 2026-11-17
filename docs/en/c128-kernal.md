@@ -29,7 +29,7 @@ Two kernals are built from the same source code:
 | `C128DolphinDos26-US.BIN` | international, USA | US editor 318020-05; CAPS LOCK as usual |
 | `C128DolphinDos26-DE.BIN` | German-speaking countries | additionally the German keyboard driver from 315078-03: the CAPS LOCK key is the **ASCII/DIN key** (locked down = DIN with the German umlauts and the sharp s, swapped Y/Z and dead keys, up = ASCII); when switching, the character set is loaded into the 80-column RAM |
 
-The driver (`src/c128dd/din_treiber.s`, 524 bytes) comes from `EDITOR_C128_DIN/german.src`. In the original it sits at $FC80; in DolphinDos26 that area holds the JiffyDOS routines. In the DE version it therefore sits in the gap after the wedge ($E7C5–$E9D0, tables on page $E8). As in the German editor it is hooked in at five places (`.ifdef DIN`): jump table `scnkey` ($C012), CINT (`nat_init`, table init via `ascii_din`/`nat_scnkey`), the key scan in the editor loop and `keychk` in ed3 (`nat_keychk`). `tools/din_vergleich.py` assembles the driver at $FC80 as a test and compares it byte by byte with 315078-03 (0 differences). Without `DIN` the ROM is byte-identical to the previous version (MD5 `859493314e98777a595d0f2a039e6800`).
+The driver (`src/c128dd/din_treiber.s`, 524 bytes) comes from `EDITOR_C128_DIN/german.src`. In the original it sits at $FC80; in DolphinDos26 that area holds the JiffyDOS routines. In the DE version it therefore sits in the gap after the wedge ($E7C5–$E9D0, tables on page $E8). As in the German editor it is hooked in at five places (`.ifdef DIN`): jump table `scnkey` ($C012), CINT (`nat_init`, table init via `ascii_din`/`nat_scnkey`), the key scan in the editor loop and `keychk` in ed3 (`nat_keychk`). `tools/din_vergleich.py` assembles the driver at $FC80 as a test and compares it byte by byte with 315078-03 (0 differences). Without `DIN` the ROM is byte-identical to the previous version (MD5 `e0a1600c63ace1da02f9efba964ab291`).
 
 To show the umlauts correctly, the German C128 needs its German character ROM (315079-01); with the US character set the US characters appear in their place. In VICE the ASCII/DIN key is on F12.
 
@@ -198,8 +198,8 @@ measures the raster line in the original kernal and stores the result in
 |---|---|
 | DolphinDos26 parallel, block-wise | `LOADING DD: $bAAAA-$bAAAA` (b = bank) |
 | Parallel cable byte-wise (`,8,2`, `$`) | `LOADING DD:` |
-| JiffyDOS fast loading | `LOADING JF: $bAAAA-$bAAAA` |
-| JiffyDOS protocol without fast loading (`,8,2`, `$`) | `LOADING JF:` |
+| JiffyDOS fast loading | `LOADING JD: $bAAAA-$bAAAA` |
+| JiffyDOS protocol without fast loading (`,8,2`, `$`) | `LOADING JD:` |
 | normal serial / burst | `LOADING` |
 
 The texts replace the tape messages in `f6b0_messages.s` (the offsets of all
@@ -223,7 +223,8 @@ In direct mode, as with DolphinDOS 3 and the C64 kernal DolphinDos26:
 | `@` | Read and print the error channel of the default device |
 | `@command` | Send a command through channel 15, then the status (e.g. `@I`, `@S:FILE`, `@CD←`, `@CD:FOLDER`, `@N:NAME,ID`) |
 | `@$`, `@$:PATTERN` | Show the directory without overwriting the BASIC program (STOP aborts) |
-| `@8` … `@11` | Select the default device (8 after power-on), also used by `LOAD`/`SAVE` without a device number |
+| `@8` … `@19` | Select the default device (8 after power-on), also used by `LOAD`/`SAVE` without a device number |
+| CTRL-D | in direct mode: change to the next drive that is present (devices 8 to 19) and show the device number, as with JiffyDOS; the check closes the command channel on every drive that is checked |
 | `"command"…` | like `@command` (for C=F5 on a directory line) |
 
 `dd_wedge_init` hooks into the BASIC vector `icrnch` ($0304) on a BASIC cold

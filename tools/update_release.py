@@ -45,10 +45,11 @@ NOTES = {
     'ms-tools.md': ('MS-Tools', 'README.md'),
     'c128-kernal.md': ('C128DD26', 'README.md'),
     'c1571-firmware.md': ('C1571DD26', 'README.md'),
+    'vic20-kernal.md': ('VIC20DD26', 'README.md'),
 }
 ROMS = ['1541DolphinDos26.bin', 'C1541_DOLPHINDOS26UL.bin', 'C1541_DOLPHINDOS26DD2.bin',
         'C64DolphinDos26.bin', 'C64IIDolphinDos26.bin', 'C128DolphinDos26-US.BIN', 'C128DolphinDos26-DE.BIN',
-        'C1571_DOLPHINDOS26.bin']
+        'C1571_DOLPHINDOS26.bin', 'VIC20DolphinDos26PAL.bin', 'VIC20DolphinDos26NTSC.bin']
 # Every manual goes to manuals/de and manuals/en as PDF (German from Builds,
 # English from --manuals-en); new manuals are added here, never to docs/.
 MANUALS = {'DolphinDos26_Handbuch.pdf': 'DolphinDos26_Manual.pdf',
@@ -94,7 +95,7 @@ def main():
     ap.add_argument('--check', action='store_true', help='report only, change nothing')
     ap.add_argument('--stamp-translations', action='store_true',
                     help='record the current German notes as translated (after updating docs/en)')
-    ap.add_argument('--root', default=str(ROOT), help='project folder with Builds, dd25, C64DD26, C128DD26, C1571DD26, MS-Tools')
+    ap.add_argument('--root', default=str(ROOT), help='project folder with Builds, dd25, C64DD26, C128DD26, C1571DD26, VIC20DD26, MS-Tools')
     a = ap.parse_args()
     ROOT = pathlib.Path(a.root).resolve()
     BUILDS = ROOT / 'Builds'
@@ -151,7 +152,7 @@ def main():
         files = ['C64DolphinDos26.bin', 'C1541_DOLPHINDOS26UL.bin']
         if 'UL' not in pdf.name:
             files += ['1541DolphinDos26.bin', 'C64IIDolphinDos26.bin', 'C128DolphinDos26-US.BIN', 'C128DolphinDos26-DE.BIN',
-                      'C1571_DOLPHINDOS26.bin']
+                      'C1571_DOLPHINDOS26.bin', 'VIC20DolphinDos26PAL.bin', 'VIC20DolphinDos26NTSC.bin']
         for f in [REPO / 'rom' / x for x in files]:
             # table cells wrap long checksums in the PDF text, so compare the first 16 digits
             if f.exists() and hashlib.md5(f.read_bytes()).hexdigest()[:16] not in flat:
