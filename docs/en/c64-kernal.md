@@ -172,7 +172,11 @@ Changed behavior:
   $00, $00, $03), see [Personalization](#personalization). The texts of the boot
   screen also appear in the text color: a new control code $06 = standard text color
   (`dd_ctrl_std` $FA64, `dd_std_col` $F949) replaces the fixed cyan codes $9F there.
-- LISTN releases CLK again on UNLISTEN as in the original.
+- LISTN does not release CLK on UNLISTEN – like the original: there is a comparison for the
+  UNLISTEN command there, but it never becomes true because the accumulator is overwritten
+  beforehand. The query “device present?” with LISTEN immediately followed by UNLISTEN therefore
+  returns the status of the original (ST `$00` or `$80`); with CLK released it reported drives that
+  are present as missing (corrected on 19 November 2026, test `tests/test_unlisten.py`).
 - Parallel LOAD/SAVE (`dd_load`/`dd_save`) check the STOP key after each
   page with `jsr stop` (aborting only when `stkey` = $7F, as with
   serial save). The original checked only bit 7 with `bit stkey` and

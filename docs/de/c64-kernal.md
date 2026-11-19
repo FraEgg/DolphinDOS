@@ -187,7 +187,11 @@ Geändertes Verhalten:
   $00, $00, $03), siehe [Personalisierung](#personalisierung). Auch die Texte des
   Einschaltbilds erscheinen in der Textfarbe: Neuer Steuercode $06 = Standard-Textfarbe
   (`dd_ctrl_std` $FA64, `dd_std_col` $F949) ersetzt im Bild die festen Cyan-Codes $9F.
-- LISTN gibt CLK bei UNLISTEN wieder frei wie im Original.
+- LISTN gibt CLK bei UNLISTEN nicht frei – wie das Original: dort steht zwar ein Vergleich auf den
+  UNLISTEN-Befehl, er wird aber nie wahr, weil der Akku vorher überschrieben wird. Die Abfrage
+  „Gerät vorhanden?“ mit LISTEN und sofort folgendem UNLISTEN liefert damit den Status des Originals
+  (ST `$00` bzw. `$80`); mit freigegebenem CLK meldete sie vorhandene Laufwerke als fehlend
+  (korrigiert am 19.11.2026, Test `tests/test_unlisten.py`).
 - Parallel-LOAD/-SAVE (`dd_load`/`dd_save`) fragen die STOP-Taste nach jeder
   Seite mit `jsr stop` ab (abgebrochen wird nur bei `stkey` = $7F, wie beim
   seriellen Speichern). Das Original prüfte mit `bit stkey` nur Bit 7 und
