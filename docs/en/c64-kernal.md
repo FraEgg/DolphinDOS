@@ -3,7 +3,7 @@
 Reconstructed ca65 source code, commented in German, of the C64 kernal
 `Referenzen/1-C64_Dolphin_DOS_Silver.rom` (Dolphin DOS "Silver", $E000–$FFFF).
 It is the basis for the further development of the C64 kernal into DolphinDos26
-(counterpart to the floppy firmware in `../dd25`). It contains routines from a
+(counterpart to the floppy firmware in `../dd26`). It contains routines from a
 JiffyDOS kernal, see
 [Origin of the JiffyDOS routines and license](#origin-of-the-jiffydos-routines-and-license).
 

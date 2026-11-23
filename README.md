@@ -109,6 +109,12 @@ The project consists of eight parts:
 - Cassette and kernal RS-232 are removed. Not everything of the C64 kernal fits into the 8 KB; the differences are listed in the notes.
 - Technical details: [docs/en/vic20-kernal.md](docs/en/vic20-kernal.md).
 
+<p align="center">
+<img src="assets/vic_01_startbild.png" alt="Power-on screen of the VIC-20 kernal DolphinDos26" width="400">
+<img src="assets/vic_02_status.png" alt="VIC-20: @ shows the message of the drive" width="400">
+</p>
+<p align="center"><em>VIC-20 with the DolphinDos26 kernal: power-on screen and the message of the drive with <code>@</code></em></p>
+
 ### C1571DolphinDos26 (1571 Multi-Speeder V3, C128DCR)
 
 - DolphinDos26 for the internal 1571 of the C128DCR: parallel transfer, track cache, `CDR`/`CDW`, the RAM disk `CDM` and the MS-Addon-API as on the 1541, in C128 and in C64 mode.
@@ -141,27 +147,26 @@ Fast loaders, copy programs and other 1541 floppy code that load their own code 
 The disk image [`ms-tools.d64`](ms-tools/ms-tools.d64) holds all tools; `MS-15SECCOPY` is also available on its own disk [`ms-15seccopy.d64`](ms-tools/ms-15seccopy.d64). The single programs are also in [`ms-tools/prg`](ms-tools/prg). Each one loads like a BASIC program:
 
 ```
-LOAD"MS-STATUS",8
+LOAD"MS-DIAG",8
 RUN
 ```
 
 | Tool | Build | Purpose |
 |---|---|---|
-| `MS-STATUS` | 23 | Shows the drive error channel |
-| `MS-MEMTEST` | 27 | Tests the 512 KB SRAM (64 banks) with 4 patterns, 1 to 99 runs, result per bank |
+| `MS-DIAG` | 31 | Diagnostics for the Multi-Speeder: memory test of the 512 KB SRAM (64 banks, 4 patterns), parallel test (PIA or VIA1, all eight data lines), Multi-Speeder test (MS-Addon-API, switching of the ROM banks 1 to 8, CDR/CDW and RAM disk with a test disk, with speed measurement) and burn-in with 1 to 99 runs |
 | `MS-FASTCOPY` | 46 | Disk copy through the 512 KB RAM or a REU (`TRANSFER: FAST` with its own fast drive code), 35/40/auto tracks, verify on/off, `ON ERROR: STOP/SKIP` (skip faulty tracks and count them), several copies, directory view, D64 file import and export; on the 1571 also double-sided disks and D71 files |
 | `MS-NIBCOPY` | 52 (BETA) | Nibble copier after the model of nibtools: reads and writes tracks bit by bit (syncs, gaps, tracks 36 to 42, half tracks, weak bits), storage in the Multi-Speeder RAM or a REU, G64 import and export; on the 1571 with index hole (same track position as the original), on the C128 at 2 MHz |
 | `MS-RS232` | 3 | RS-232 driver in RAM at $9800 to $9FFF, because the kernal has no RS-232 routines |
 | `MS-15SECCOPY` | 19 | New version of 15 Seconds Copy by Mike Pall: copies normally formatted disks as raw GCR over the parallel cable |
 
-`MS-MEMTEST` needs the Multi-Speeder. `MS-FASTCOPY` works without it if there is a REU of at least 256 KB and a parallel connection (PIA or VIA1), for example with DolphinDos26UL. The raw driver [`RS232DRV-9800.prg`](ms-tools/prg/RS232DRV-9800.prg) is included as well.
+The memory test and the Multi-Speeder test of `MS-DIAG` need the Multi-Speeder; its parallel test also runs without it. `MS-FASTCOPY` works without it if there is a REU of at least 256 KB and a parallel connection (PIA or VIA1), for example with DolphinDos26UL. The raw driver [`RS232DRV-9800.prg`](ms-tools/prg/RS232DRV-9800.prg) is included as well.
 
 `MS-15SECCOPY` (Build 19) is a new version of **15 Seconds Copy**, written by **Mike Pall** in 1986. It copies normally formatted disks as raw GCR over the parallel cable and shows every track and sector in a grid. Minimum requirements: a REU of at least 256 KB (512 KB for 40 tracks) and a parallel cable on VIA1 or on the PIA, with a 1541 or 1571 as device 8; for BACKUP and VERIFY a 1571 with DolphinDOS is set to 1 MHz with `X-` and back to 2 MHz with `X+` afterwards, a 1571 with SpeedDos26 with `U0>M0` and `U0>M1`. The original 1541 ROM and the original kernal are enough; DolphinDos26 and the Multi-Speeder are not needed. On real hardware (C64U, 1541, REU), BACKUP and VERIFY ran over all 683 blocks without errors, on VIA1 under DolphinDOS 2.0 and on the PIA under DolphinDos26DD2, with source and target being the same disk; 35 tracks took at most 12 s reading and 18 s writing. The REU is used as a buffer, so data stored there may be overwritten.
 
 > **MS-NIBCOPY is a BETA version** and is being developed further; functions and operation can still change. It needs the MS-RAM of the Multi-Speeder or a REU and an active parallel connection, and it has not been tested with DolphinDOS 2.
 
 <p align="center">
-<img src="assets/ms_03_memtest.png" alt="MS-MEMTEST" width="380">
+<img src="assets/ms_03_diag.png" alt="MS-DIAG" width="380">
 <img src="assets/ms_05_fastcopy.png" alt="MS-FASTCOPY" width="380">
 <img src="assets/ms_07_nibcopy.png" alt="MS-NIBCOPY" width="380">
 <img src="assets/ms_11_15seccopy.png" alt="MS-15SECCOPY" width="380">
@@ -222,7 +227,7 @@ Full steps and troubleshooting are in the manuals.
 - The C64 kernal, also as C64 II ROM, the DolphinDos26 and DolphinDos26DD2 firmware and MS-FASTCOPY (also with REU storage and with the original DolphinDOS 2.0) run on real hardware. Whether a real SD2IEC accepts `.D64` as a plain file has not been checked. The case of a write-protected target disk with `CDW` is untested.
 - The content of the 512 KB RAM survives a drive reset, but not power-off.
 - Colors: the kernal uses the colors of the original C64 ROM. Border, background and text are single ROM bytes ($ECD9, $ECDA, $E535), see [Personalization](docs/en/c64-kernal.md#personalization).
-- `MS-MEMTEST` overwrites the RAM content.
+- `MS-DIAG` overwrites the RAM content (memory test and Multi-Speeder test); the Multi-Speeder test also erases the disk in the drive.
 - Programs with their own fast loader or copy protection sometimes only run with the original kernal and original DOS.
 - DolphinDos26 uses illegal NMOS 6502 instructions like DolphinDOS, so it does not run on a WDC 65C02.
 - C1571DolphinDos26 always runs at 2 MHz like the original DolphinDOS 3. Enter `@X-` before loading programs with their own fast loader, or switch to the Commodore ROM with `@I:1@RNROM`. MS-15SECCOPY sets a 1571 with DolphinDOS or SpeedDos26 to 1 MHz itself for BACKUP and VERIFY; MS-NIBCOPY detects the 1571 and loads its own drive code (1 MHz for disk access, index hole).
@@ -241,7 +246,7 @@ tools/           Maintenance script for this repository
 CHECKSUMS.*      MD5 and SHA-256 of all published files
 ```
 
-The source code is **not** part of this repository. The manuals and technical notes mention folders such as `Builds`, `dd25`, `C64DD26`, `C128DD26`, `C1571DD26`, `VIC20DD26` and `MS-Tools`; these are the development folders. See [docs/README.md](docs/README.md).
+The source code is **not** part of this repository. The manuals and technical notes mention folders such as `Builds`, `dd26`, `C64DD26`, `C128DD26`, `C1571DD26`, `VIC20DD26` and `MS-Tools`; these are the development folders. See [docs/README.md](docs/README.md).
 
 The 512 KB EPROM templates named in the manuals are not in this repository but in the hardware repositories: `C1541_29F040.BIN` for the [1541](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1541), `C1571_29F040.BIN` for the [external 1571](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) and `C1571_C128DCR_29F040.BIN` for the [C128DCR](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-C128DCR-1571). The browser tool MS-ROM-Builder there assembles your own image from your own banks.
 
@@ -358,6 +363,12 @@ Das Projekt besteht aus acht Teilen:
 - Kassette und Kernal-RS-232 sind entfernt. Nicht alles aus dem C64-Kernal passt in die 8 KB; die Unterschiede stehen in den Notizen.
 - Technische Einzelheiten: [docs/de/vic20-kernal.md](docs/de/vic20-kernal.md).
 
+<p align="center">
+<img src="assets/vic_01_startbild.png" alt="Einschaltbild des VIC-20-Kernals DolphinDos26" width="400">
+<img src="assets/vic_02_status.png" alt="VIC-20: @ zeigt die Meldung des Laufwerks" width="400">
+</p>
+<p align="center"><em>VIC-20 mit dem DolphinDos26-Kernal: Einschaltbild und die Meldung des Laufwerks mit <code>@</code></em></p>
+
 ### C1571DolphinDos26 (1571 Multi-Speeder V3, C128DCR)
 
 - DolphinDos26 für die interne 1571 des C128DCR: Parallelübertragung, Track-Cache, `CDR`/`CDW`, die RAM-Disk `CDM` und die MS-Addon-API wie bei der 1541, im C128- und im C64-Modus.
@@ -390,20 +401,19 @@ Schnelllader, Kopierprogramme und anderer 1541-Floppycode, die eigenen Code ins 
 Das Disketten-Abbild [`ms-tools.d64`](ms-tools/ms-tools.d64) enthält alle Tools; `MS-15SECCOPY` gibt es zusätzlich auf einer eigenen Diskette: [`ms-15seccopy.d64`](ms-tools/ms-15seccopy.d64). Die einzelnen Programme liegen zusätzlich in [`ms-tools/prg`](ms-tools/prg). Jedes lädt wie ein BASIC-Programm:
 
 ```
-LOAD"MS-STATUS",8
+LOAD"MS-DIAG",8
 RUN
 ```
 
 | Tool | Build | Zweck |
 |---|---|---|
-| `MS-STATUS` | 23 | Zeigt den Fehlerkanal des Laufwerks |
-| `MS-MEMTEST` | 27 | Prüft die 512 KB SRAM (64 Bänke) mit 4 Mustern, 1 bis 99 Läufe, Ergebnis je Bank |
+| `MS-DIAG` | 31 | Diagnose für den Multi-Speeder: Speichertest der 512 KB SRAM (64 Bänke, 4 Muster), Paralleltest (PIA oder VIA1, alle acht Datenleitungen), Multi-Speeder-Test (MS-Addon-API, Umschalten der ROM-Bänke 1 bis 8, CDR/CDW und RAM-Disk mit einer Testdiskette, mit Geschwindigkeitsmessung) und Burn-In mit 1 bis 99 Durchläufen |
 | `MS-FASTCOPY` | 46 | Diskettenkopie über das 512-KB-RAM oder eine REU (`TRANSFER: FAST` mit eigenem schnellen Laufwerkscode), 35/40/AUTO Spuren, Verify an/aus, `ON ERROR: STOP/SKIP` (fehlerhafte Spuren überspringen und zählen), mehrere Kopien, Directory-Anzeige, D64-Import und -Export; an der 1571 auch doppelseitige Disketten und D71-Dateien |
 | `MS-NIBCOPY` | 52 (BETA) | Nibble-Kopierer nach dem Vorbild der nibtools: Spuren bitgenau lesen und schreiben (Syncs, Lücken, Spur 36 bis 42, Halbspuren, Weak Bits), Ablage im Multi-Speeder-RAM oder in einer REU, G64-Import und -Export; an der 1571 mit Indexloch (gleiche Spurlage wie das Original), am C128 mit 2 MHz |
 | `MS-RS232` | 3 | RS-232-Treiber im RAM bei $9800 bis $9FFF, weil der Kernal keine RS-232-Routinen hat |
 | `MS-15SECCOPY` | 19 | Neue Fassung von 15 Seconds Copy von Mike Pall: kopiert normal formatierte Disketten als rohes GCR über das Parallelkabel |
 
-`MS-MEMTEST` braucht den Multi-Speeder. `MS-FASTCOPY` geht auch ohne ihn, wenn eine REU ab 256 KB und eine Parallelverbindung (PIA oder VIA1) vorhanden sind, zum Beispiel mit DolphinDos26UL. Der reine Treiber [`RS232DRV-9800.prg`](ms-tools/prg/RS232DRV-9800.prg) liegt ebenfalls bei.
+Speichertest und Multi-Speeder-Test von `MS-DIAG` brauchen den Multi-Speeder; der Paralleltest läuft auch ohne ihn. `MS-FASTCOPY` geht auch ohne ihn, wenn eine REU ab 256 KB und eine Parallelverbindung (PIA oder VIA1) vorhanden sind, zum Beispiel mit DolphinDos26UL. Der reine Treiber [`RS232DRV-9800.prg`](ms-tools/prg/RS232DRV-9800.prg) liegt ebenfalls bei.
 
 `MS-15SECCOPY` (Build 19) ist eine neue Fassung von **15 Seconds Copy**, das **Mike Pall** 1986 geschrieben hat. Es kopiert normal formatierte Disketten als rohes GCR über das Parallelkabel und zeigt jede Spur und jeden Sektor in einem Raster. Mindestanforderungen: eine REU ab 256 KB (512 KB für 40 Spuren) und ein Parallelkabel am VIA1 oder am PIA, dazu eine 1541 oder 1571 als Gerät 8; eine 1571 mit DolphinDOS stellt das Programm für BACKUP und VERIFY mit `X-` auf 1 MHz und danach mit `X+` wieder auf 2 MHz, eine 1571 mit SpeedDos26 mit `U0>M0` und `U0>M1`. Original-1541-ROM und Original-Kernal genügen; DolphinDos26 und Multi-Speeder sind nicht nötig. Auf echter Hardware (C64U, 1541, REU) liefen BACKUP und VERIFY über alle 683 Blöcke ohne Fehler, am VIA1 unter DolphinDOS 2.0 und am PIA unter DolphinDos26DD2, Quelle und Ziel waren dabei dieselbe Diskette; 35 Spuren brauchten höchstens 12 s zum Lesen und 18 s zum Schreiben. Die REU dient als Zwischenspeicher, dort abgelegte Daten können überschrieben werden.
 
@@ -464,7 +474,7 @@ Alle Schritte und die Fehlersuche stehen in den Handbüchern.
 - Der C64-Kernal, auch als C64-II-ROM, die Firmware DolphinDos26 und DolphinDos26DD2 und MS-FASTCOPY (auch mit der REU als Speicher und mit dem Original-DolphinDOS 2.0) laufen auf echter Hardware. Ob ein echtes SD2IEC `.D64` als einfache Datei annimmt, ist nicht geprüft. Der Fall einer schreibgeschützten Zieldiskette bei `CDW` ist ungetestet.
 - Der Inhalt des 512-KB-RAMs übersteht einen Reset des Laufwerks, aber nicht das Ausschalten.
 - Farben: Der Kernal hat die Farben des Original-C64-ROMs. Rahmen, Hintergrund und Text sind einzelne ROM-Bytes ($ECD9, $ECDA, $E535), siehe [Personalisierung](docs/de/c64-kernal.md#personalisierung).
-- `MS-MEMTEST` überschreibt den RAM-Inhalt.
+- `MS-DIAG` überschreibt den RAM-Inhalt (Speichertest und Multi-Speeder-Test); der Multi-Speeder-Test löscht außerdem die Diskette im Laufwerk.
 - Programme mit eigenem Schnelllader oder Kopierschutz laufen mitunter nur mit Original-Kernal und Original-DOS.
 - DolphinDos26 verwendet wie DolphinDOS illegale NMOS-6502-Befehle und läuft daher nicht auf einer WDC 65C02.
 - C1571DolphinDos26 läuft wie das originale DolphinDOS 3 immer mit 2 MHz. Vor dem Laden von Programmen mit eigenem Schnelllader `@X-` eingeben oder mit `@I:1@RNROM` auf das Commodore-ROM umschalten. MS-15SECCOPY stellt eine 1571 mit DolphinDOS oder SpeedDos26 für BACKUP und VERIFY selbst auf 1 MHz; MS-NIBCOPY erkennt die 1571 und lädt einen eigenen Laufwerkscode (1 MHz für den Diskettenzugriff, Indexloch).
@@ -483,7 +493,7 @@ tools/           Pflegeskript für dieses Repository
 CHECKSUMS.*      MD5 und SHA-256 aller veröffentlichten Dateien
 ```
 
-Der Quelltext ist **nicht** Teil dieses Repositorys. Handbücher und technische Notizen nennen Ordner wie `Builds`, `dd25`, `C64DD26`, `C128DD26`, `C1571DD26`, `VIC20DD26` und `MS-Tools`; das sind die Entwicklungsordner. Siehe [docs/README.md](docs/README.md).
+Der Quelltext ist **nicht** Teil dieses Repositorys. Handbücher und technische Notizen nennen Ordner wie `Builds`, `dd26`, `C64DD26`, `C128DD26`, `C1571DD26`, `VIC20DD26` und `MS-Tools`; das sind die Entwicklungsordner. Siehe [docs/README.md](docs/README.md).
 
 Die in den Handbüchern genannten 512-KB-EPROM-Vorlagen liegen nicht in diesem Repository, sondern in den Hardware-Repositorys: `C1541_29F040.BIN` für die [1541](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1541), `C1571_29F040.BIN` für die [externe 1571](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-1571) und `C1571_C128DCR_29F040.BIN` für den [C128DCR](https://github.com/FraEgg/Switchless-Multi-Speeder-Commodore-C128DCR-1571). Mit dem Browser-Tool MS-ROM-Builder dort lässt sich ein eigenes Abbild aus eigenen Bänken zusammenstellen.
 

@@ -5,17 +5,17 @@ Multi-Speeder V3 with DolphinDos26, by Frank Eggen. Each tool loads like a
 BASIC program and starts with `RUN`:
 
 ```
-LOAD"MS-STATUS",8
+LOAD"MS-DIAG",8
 RUN
 ```
 
 Each tool carries the same identification, on `LIST` and after `RUN`:
 
 ```
-10 REM MS-STATUS BUILD 1 / 2026
+10 REM MS-DIAG BUILD 1 / 2026
 20 REM BY FRANK EGGEN
 30 REM SWITCHLESS MULTI-SPEEDER V3
-40 SYS2147
+40 SYS2145
 ```
 
 The build number is in `buildnr/<tool>.nr` and increases with every
@@ -59,7 +59,7 @@ Routines: `ui_init`, `ui_exit`, `ui_puts` (text at `ui_row`/`ui_col` in
 | `src/drv-<name>.s`, `drive.cfg` | drive programs (from $0400, at most 512 bytes), via `.incbin` in the tool, uploaded via M-W and started via M-E |
 | `buildnr/<tool>.nr` | build number per tool |
 | `tests/test_tools.py` | LOAD, LIST, RUN, interface, colors and exit of each tool in the patched VICE (GUI); different colors are set before each start, after exit border, background and text color must be the same again |
-| `tests/test_memtest.py` | MS-MEMTEST: select drive 9 (missing), run without errors, run with a byte corrupted via the monitor, DolphinDOS afterwards |
+| `tests/test_diag.py` | MS-DIAG with the EPROM image (all eight banks): main screen, parallel test, Multi-Speeder test (API, ROM banks, disk sequence), memory test without and with a byte corrupted via the monitor, burn-in with 2 runs and VERIFY OFF; in addition DolphinDos26UL (VIA1, without Multi-Speeder) |
 | `tests/test_fastcopy.py [on/off] [40] [side2]` | MS-FASTCOPY: read and two copies, target D64 byte-identical to the source |
 | `tests/test_fastcopy_reu.py [case]` | MS-FASTCOPY with REU: VIA1/PIA detection, copies byte-identical, 40 tracks, formatting, write protection, without REU/parallel |
 | `tests/test_fastcopy_d64.py [case]` | MS-FASTCOPY: IMPORT/EXPORT D64 FILE with MS-RAM and REU, 35/40 tracks, file = disk, invalid files |
@@ -93,7 +93,7 @@ After unpacking, it jumps to the tool's entry point. Exomizer 3.1
 is built from `../Referenzen/krill-loader-v194/loader/tools/exomizer-3.1/src`
 (`make`) and the program is placed in the path as `exomizer3`
 (`make EXOMIZER=…` for a different location). Savings: MS-NIBCOPY 86 → 47,
-MS-FASTCOPY 17 → 12, MS-MEMTEST 15 → 12 blocks.
+MS-FASTCOPY 17 → 12, MS-DIAG 45 → 28 blocks.
 
 New tool: create `src/<name>.s`, enter `<name>` in `TOOLS` in the Makefile,
 add a test case in `tests/test_tools.py`.
@@ -102,31 +102,130 @@ add a test case in `tests/test_tools.py`.
 
 | Name | Function |
 |---|---|
-| `MS-STATUS` | show the drive's error channel, menu READ STATUS / QUIT (template for further tools) |
-| `MS-MEMTEST` | RAM test of the 512 KB SRAM (64 banks): 4 patterns, 1-99 runs, display per bank |
+| `MS-DIAG` | diagnostics: RAM test of the 512 KB SRAM (64 banks), parallel test (PIA/VIA1), Multi-Speeder test (API, ROM banks 1-8, CDR/CDW and RAM disk with a test disk), burn-in with 1-99 runs |
 | `MS-FASTCOPY` | disk copy via the 512 KB RAM (data copy like CDR/CDW), 35/40/AUTO tracks, verify on/off, CDR1/CDR2 and CDW1/CDW2, multiple copies |
 | `MS-NIBCOPY` (BETA) | nibble copier modeled on nibtools: read and write tracks with bit accuracy (syncs, gaps, tracks 36–42, half tracks, weak bits), storage in Multi-Speeder RAM or in the REU; also runs with DolphinDos26UL (C64U), then only with REU |
 | `MS-RS232` | RS-232 driver for device 2 on the user port (the DolphinDos26 kernal has no RS-232 routines): routines of the original kernal in RAM at $9800-$9FFF, OPEN 2,2,… as on the original C64 |
 
-### MS-MEMTEST
+### MS-DIAG
 
-The test program `src/drv-memtest.s` runs in the drive. One run: for each
-pattern (`$55`, `$AA`, address = offset ⊕ page ⊕ bank, address inverted)
-first fill banks 1-63, then check them all – this also reveals overlapping banks
-or pages. Bank 0 (working RAM of DolphinDOS) is tested at the end in one
-call and saved to bank 1 for this purpose. The remaining RAM contents
-(CDR sides, RAM disk) are lost: the tool switches off the RAM disk
-beforehand (`CDM0`).
+Diagnostics for the Multi-Speeder with three tests, individually or together as a burn-in.
 
-Display: 8×8 banks (logical numbers 00-63), gray = pending, yellow reverse =
-being tested, green = OK, black reverse = FAIL (persists across all runs),
-plus the number of faulty bytes and the first error with bank, address, expected
-and actual value. One run takes about 2 minutes.
+Menu: MEMORY TEST 512 KB, PARALLEL TEST, MULTI-SPEEDER V3 TEST, BURN-IN (ALL TESTS),
+RUNS (1-99), VERIFY (ON/OFF), DRIVE (8-11, preset to the drive the tool was loaded
+from), QUIT; change values with cursor left/right or RETURN. RUNS applies to every
+start: a single test is repeated that many times, the burn-in runs all three tests in
+turn that many times. The main screen shows the drive with the name of its DOS (from
+the power-on message in the ROM, `$E5B7`), the version of the MS-Addon-API, the parallel
+connection (PIA or VIA1) and for each test the last result with runs passed/runs. A
+start clears only the results of the tests it runs. After a test series the last screen
+remains until a key is pressed. The memory test and the Multi-Speeder test need the
+MS-Addon-API, otherwise `N/A`.
 
-Menu: START TEST, RUNS (1-99), DRIVE (8-11, preset to the drive
-the tool was loaded from), QUIT; change values with cursor left/right or RETURN.
-The drive routines come from `src/drive.s` (`M-E`/`M-R` are
-retried up to three times on transfer errors).
+The drive routines come from `src/drive.s` (`M-E`/`M-R` are repeated up to three times
+on transfer errors).
+
+**MEMORY TEST 512 KB.** The test program `src/drv-diag.s` runs in the drive. One run:
+for each pattern (`$55`, `$AA`, address = offset ⊕ page ⊕ bank, address inverted) first
+fill banks 1-63, then check all of them – this also reveals overlapping banks or pages.
+Bank 0 (working RAM of DolphinDOS) is tested at the end in one call and saved to bank 1
+for that. The remaining RAM contents (CDR sides, RAM disk) are lost: the tool switches
+the RAM disk off first (`CDM0`). Display: 8×8 banks (logical numbers 00-63), grey =
+pending, yellow reversed = being tested, green = OK, black reversed = FAIL (remains
+across all runs), plus the number of faulty bytes and the first error with bank,
+address, expected and actual value. One run takes about 2 minutes.
+
+**PARALLEL TEST.** Three items:
+
+- `INTERFACE`: which chip serves the cable – PIA 6821 at `$5000` or VIA1
+  (DolphinDos26UL, DolphinDos26DD2, original DolphinDOS 2.0). Detection as in
+  MS-FASTCOPY (`par_check`).
+- `KERNAL LINK`: the kernal sets bit 7 of `$DC0C` in the secondary address when the
+  drive answers over the cable – this checks the whole path with the handshake lines
+  (kernal, cable, firmware, `XP+`).
+- `DATA LINES`: the drive program `src/drv-par.s` (two versions: `-D PIA` and VIA1, from
+  `$0400`) returns every byte inverted; 4 × 256 values test all eight data lines in both
+  directions. Handshake over CLK/DATA as in `src/drv-fast.s`, ATN stays free. On errors:
+  number and bits affected.
+
+The drive program returns to the DOS with RTS (stack, data direction and control
+register as at the start) – no reset. Its variables are in its own area: in the zero
+page of the DOS, `$12/$13` hold the disk ID and before that the jobs. If the C64 does
+not answer for about 4 seconds, it returns by itself.
+
+**MULTI-SPEEDER V3 TEST.** Before the start a notice (once per test series): the disk in
+the drive is erased, and all eight ROM banks must hold a DOS – an empty bank stops the
+drive. Three parts:
+
+1. **API:** identifier `MS`, version, number of entries, every entry of the jump table is
+   a `JMP $3xxx`, call of INFO. (ABORT without an open session is left out: it restores
+   a state that was never saved.)
+2. **ROM banks:** pass 1 switches on banks 1 to 8 with `n@RNROM` and remembers a feature
+   of each bank (24 bytes from `$E5B7` – the name of the DOS – and 8 bytes from `$C000`),
+   pass 2 goes from 8 to 1 and compares. Up to three attempts per bank. If all banks show
+   the same feature, no switching can be proven (error). Banks with the same contents
+   cannot be told apart by the program. At the end back to the start bank: switch from
+   bank 8 downwards until the feature is again the one from the start.
+3. **Disk** (13 steps, BASIC ROM off, file buffer `$3B00`-`$CFFF`):
+   `N:MS-DIAG,26+` (40 tracks, recognised by more than 700 free blocks); four files of
+   150 blocks and small files (10-20 blocks) until fewer than 10 blocks are free; read
+   side 2 through the API (OPEN, TRACK 1-40, CLOSE, INFO, SECTOR with disk name); `CDR1`,
+   `CDR2` (INFO must report 40 tracks each); `CDM1`, load and compare all files, scratch
+   them individually, directory empty; `CDM0`, `CDW1`, disk empty; `CDW2`, load all files
+   from the disk and compare them, scratch them individually. The contents of every file
+   are a pattern made from position and file number; the comparison is done after loading
+   into the buffer cleared beforehand. VERIFY ON/OFF switches `XV+`/`XV-`; afterwards the
+   previous setting applies again (from the X status).
+
+Measurement uses the clock of CIA 2 (it also runs with interrupts disabled): write and
+read speed in bytes per second across all files of a step (only the time in SAVE or
+LOAD), for formatting, API reading, CDR and CDW the duration.
+
+**Own bus routines in the ROM part:** the whole ROM part does not address the drive
+through the KERNAL but through its own serial routines, in which every waiting point has
+a time limit: `sx_send` (LISTEN, secondary address 15, bytes with EOI, UNLISTEN),
+`sx_status` (TALK, read the message, UNTALK), `sx_mr` (`M-R`) and `bus_probe` (LISTEN,
+secondary address 15, UNLISTEN without a data byte: does the drive answer?). Reasons, all
+found on real hardware:
+
+- The KERNAL waits without a time limit when a drive pulls DATA but does not answer –
+  such as a drive that is restarting (the circuit pulls DATA by itself on ATN).
+- The KERNAL takes a drive for a DolphinDOS with parallel cable as soon as a FLAG pulse
+  arrives after the secondary address. On the same cable another DOS can trigger that as
+  well (SpeedDos26 in bank 3); the KERNAL then waits for a parallel transfer that never
+  comes.
+- After `n@RNROM` the bus stays untouched for `ROM_WAIT` = 8 seconds (blinking and
+  restart): queries during the switching disturb some DOS versions. After that
+  `bus_probe` asks until the drive answers, and `sx_status` must return message 73.
+
+Details of the bus routines:
+
+- After LISTEN only the addressed device holds DATA pulled; a second drive on the bus
+  therefore does not disturb. The secondary address is necessary: without a valid channel
+  the DOS gives up again right after LISTEN (`listen` → `idle`) and releases DATA – after
+  a restart always.
+- Bit times when sending as in the KERNAL (CLK pulled about 70, released about 30
+  microseconds), not slower: JiffyDOS drives take a pause before the last bit as the mark
+  of a JiffyDOS computer.
+- When receiving, DATA is taken from the same debounced read access that shows CLK
+  released (like ACPTR in the KERNAL). A later second access comes too late after a bad
+  line and reads a wrong bit.
+- The bus accesses are placed as in the KERNAL (right after ATN and twice after the
+  waiting time): emulated devices in emulators advance their state only on accesses.
+
+If a bank change also fails at the third attempt, the reason follows `FAIL`:
+`NO ANSWER` (the drive does not answer even before the command), `NO RESTART` (no answer
+after the switching), `BUS ERROR` (transfer aborted), `MSG nn` (a message other than 73,
+so no restart) or `CHANGED` (contents different from the first visit). Before every test
+and after the ROM part `bus_probe` checks whether the drive answers; otherwise
+`DRIVE DOES NOT ANSWER` instead of a KERNAL call that would hang.
+
+The tables `st`, `fsz` and the command buffer `cbuf` are in the cassette buffer
+(`$033C`-`$03FB`) so that the program has room below the file buffer.
+
+**Jumps:** the tests and steps are called through `callvec` in the DATA segment (`JMP`
+with the target inserted), not through `JMP (vec)`: on the 6502 that jumps wrongly when
+the pointer lies at a page boundary (`$xxFF`).
 
 ### MS-FASTCOPY
 
@@ -143,7 +242,7 @@ required; without it nothing is copied and only DIRECTORY remains.
 Copies a disk in one pass via the Multi-Speeder's RAM,
 track by track with display (data copy like `CDR`/`CDW`).
 Uses the MS-Addon API of DolphinDos26 (jump table from `$3FFF`, see
-`dd25/README.md`).
+`dd26/README.md`).
 
 Two-column menu as in MS-NIBCOPY: `SETTINGS` on the left, `ACTIONS` on the right.
 CRSR up/down moves through all items, CRSR left/right changes a setting or

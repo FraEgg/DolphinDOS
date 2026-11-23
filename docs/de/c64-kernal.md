@@ -3,7 +3,7 @@
 Rekonstruierter, deutsch kommentierter ca65-Quelltext des C64-Kernals
 `Referenzen/1-C64_Dolphin_DOS_Silver.rom` (Dolphin DOS „Silver“, $E000–$FFFF).
 Er ist die Grundlage für die Weiterentwicklung des C64-Kernals zu DolphinDos26
-(Gegenstück zur Floppy-Firmware in `../dd25`). Er enthält Routinen aus einem
+(Gegenstück zur Floppy-Firmware in `../dd26`). Er enthält Routinen aus einem
 JiffyDOS-Kernal, siehe
 [Herkunft der JiffyDOS-Routinen und Lizenz](#herkunft-der-jiffydos-routinen-und-lizenz).
 

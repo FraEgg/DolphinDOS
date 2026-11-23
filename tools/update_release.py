@@ -29,10 +29,10 @@ REPO = pathlib.Path(__file__).resolve().parent.parent
 
 
 def find_root(start):
-    """Project folder: the first parent with Builds and dd25 (the repository lives in
+    """Project folder: the first parent with Builds and dd26 (the repository lives in
     Git/DolphinDOS; this also works from a worktree below .claude/worktrees)."""
     for d in start.parents:
-        if (d / 'Builds').is_dir() and (d / 'dd25').is_dir():
+        if (d / 'Builds').is_dir() and (d / 'dd26').is_dir():
             return d
     return start.parent
 
@@ -40,7 +40,7 @@ def find_root(start):
 ROOT = find_root(REPO)
 # German development note -> name in docs/de and docs/en, with its git repository
 NOTES = {
-    'firmware-source-notes.md': ('dd25', 'README.md'),
+    'firmware-source-notes.md': ('dd26', 'README.md'),
     'c64-kernal.md': ('C64DD26', 'README.md'),
     'ms-tools.md': ('MS-Tools', 'README.md'),
     'c128-kernal.md': ('C128DD26', 'README.md'),
@@ -63,7 +63,7 @@ ROM_MANUALS = ('DolphinDos26_Handbuch.pdf', 'DolphinDos26_Manual.pdf',
                'DolphinDos26UL_Handbuch.pdf', 'DolphinDos26UL_Manual.pdf')
 # Every tool on ms-tools.d64 is published; the disk is copied unchanged, so the MD5
 # stated in the manuals applies to the published disk as well.
-PRGS = ['ms-status', 'ms-memtest', 'ms-fastcopy', 'ms-nibcopy', 'ms-rs232', 'ms-15seccopy']
+PRGS = ['ms-diag', 'ms-fastcopy', 'ms-nibcopy', 'ms-rs232', 'ms-15seccopy']
 STAMP = REPO / 'tools' / 'translated-from.json'
 
 
@@ -95,7 +95,7 @@ def main():
     ap.add_argument('--check', action='store_true', help='report only, change nothing')
     ap.add_argument('--stamp-translations', action='store_true',
                     help='record the current German notes as translated (after updating docs/en)')
-    ap.add_argument('--root', default=str(ROOT), help='project folder with Builds, dd25, C64DD26, C128DD26, C1571DD26, VIC20DD26, MS-Tools')
+    ap.add_argument('--root', default=str(ROOT), help='project folder with Builds, dd26, C64DD26, C128DD26, C1571DD26, VIC20DD26, MS-Tools')
     a = ap.parse_args()
     ROOT = pathlib.Path(a.root).resolve()
     BUILDS = ROOT / 'Builds'

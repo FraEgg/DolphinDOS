@@ -5,17 +5,17 @@ Multi-Speeder V3 mit DolphinDos26, by Frank Eggen. Jedes Tool lädt wie ein
 BASIC-Programm und startet mit `RUN`:
 
 ```
-LOAD"MS-STATUS",8
+LOAD"MS-DIAG",8
 RUN
 ```
 
 Jedes Tool trägt dieselbe Kennung, bei `LIST` und nach `RUN`:
 
 ```
-10 REM MS-STATUS BUILD 1 / 2026
+10 REM MS-DIAG BUILD 1 / 2026
 20 REM BY FRANK EGGEN
 30 REM SWITCHLESS MULTI-SPEEDER V3
-40 SYS2147
+40 SYS2145
 ```
 
 Die Buildnummer steht in `buildnr/<tool>.nr` und erhöht sich bei jedem
@@ -59,7 +59,7 @@ Routinen: `ui_init`, `ui_exit`, `ui_puts` (Text bei `ui_row`/`ui_col` in
 | `src/drv-<name>.s`, `drive.cfg` | Laufwerksprogramme (ab $0400, höchstens 512 Bytes), per `.incbin` im Tool, per M-W hochgeladen und per M-E gestartet |
 | `buildnr/<tool>.nr` | Buildnummer je Tool |
 | `tests/test_tools.py` | LOAD, LIST, RUN, Oberfläche, Farben und Beenden jedes Tools im gepatchten VICE (GUI); vor jedem Start andere Farben gesetzt, nach dem Beenden müssen Rahmen, Hintergrund und Textfarbe wieder so sein |
-| `tests/test_memtest.py` | MS-MEMTEST: Laufwerk 9 (fehlt) wählen, Lauf ohne Fehler, Lauf mit per Monitor verfälschtem Byte, DolphinDOS danach |
+| `tests/test_diag.py` | MS-DIAG mit dem EPROM-Abbild (alle acht Bänke): Hauptbild, Paralleltest, Multi-Speeder-Test (API, ROM-Bänke, Diskettenablauf), Speichertest ohne und mit per Monitor verfälschtem Byte, Burn-In mit 2 Durchläufen und VERIFY OFF; dazu DolphinDos26UL (VIA1, ohne Multi-Speeder) |
 | `tests/test_fastcopy.py [on/off] [40] [side2]` | MS-FASTCOPY: lesen und zwei Kopien, Ziel-D64 byte-gleich zur Quelle |
 | `tests/test_fastcopy_reu.py [fall]` | MS-FASTCOPY mit REU: VIA1/PIA-Erkennung, Kopien byte-gleich, 40 Spuren, Formatieren, Schreibschutz, ohne REU/Parallel |
 | `tests/test_fastcopy_d64.py [fall]` | MS-FASTCOPY: IMPORT/EXPORT D64 FILE mit MS-RAM und REU, 35/40 Spuren, Datei = Diskette, ungültige Dateien |
@@ -93,7 +93,7 @@ Nach dem Entpacken springt sie an den Einsprung des Tools. Exomizer 3.1
 baut man aus `../Referenzen/krill-loader-v194/loader/tools/exomizer-3.1/src`
 (`make`) und legt das Programm als `exomizer3` in den Pfad
 (`make EXOMIZER=…` für einen anderen Ort). Ersparnis: MS-NIBCOPY 86 → 47,
-MS-FASTCOPY 17 → 12, MS-MEMTEST 15 → 12 Blöcke.
+MS-FASTCOPY 17 → 12, MS-DIAG 45 → 28 Blöcke.
 
 Neues Tool: `src/<name>.s` anlegen, `<name>` in `TOOLS` im Makefile eintragen,
 Testfall in `tests/test_tools.py` ergänzen.
@@ -102,31 +102,129 @@ Testfall in `tests/test_tools.py` ergänzen.
 
 | Name | Funktion |
 |---|---|
-| `MS-STATUS` | Fehlerkanal des Laufwerks anzeigen, Menü READ STATUS / QUIT (Vorlage für weitere Tools) |
-| `MS-MEMTEST` | RAM-Test der 512 KB SRAM (64 Bänke): 4 Muster, 1-99 Läufe, Anzeige je Bank |
+| `MS-DIAG` | Diagnose: RAM-Test der 512 KB SRAM (64 Bänke), Paralleltest (PIA/VIA1), Multi-Speeder-Test (API, ROM-Bänke 1-8, CDR/CDW und RAM-Disk mit Testdiskette), Burn-In mit 1-99 Läufen |
 | `MS-FASTCOPY` | Diskettenkopie über das 512-KB-RAM (Datenkopie wie CDR/CDW), 35/40/AUTO Spuren, Verify an/aus, CDR1/CDR2 und CDW1/CDW2, mehrere Kopien |
 | `MS-NIBCOPY` (BETA) | Nibble-Kopierer nach dem Vorbild der nibtools: Spuren bitgenau lesen und schreiben (Syncs, Lücken, Spur 36–42, Halbspuren, Weak Bits), Ablage im Multi-Speeder-RAM oder in der REU; läuft auch mit DolphinDos26UL (C64U), dann nur mit REU |
 | `MS-RS232` | RS-232-Treiber für Gerät 2 am User-Port (der DolphinDos26-Kernal hat keine RS-232-Routinen): Routinen des Original-Kernals im RAM bei $9800-$9FFF, OPEN 2,2,… wie beim Original-C64 |
 
-### MS-MEMTEST
+### MS-DIAG
 
-Das Prüfprogramm `src/drv-memtest.s` läuft im Laufwerk. Ein Lauf: für jedes
-Muster (`$55`, `$AA`, Adresse = Offset ⊕ Seite ⊕ Bank, Adresse invertiert)
-erst Bank 1-63 füllen, dann alle prüfen – so fallen auch überlagerte Bänke
-oder Seiten auf. Bank 0 (Arbeits-RAM von DolphinDOS) wird am Ende in einem
-Aufruf getestet und dafür in Bank 1 gesichert. Der übrige RAM-Inhalt
-(CDR-Seiten, RAM-Disk) geht verloren: das Tool schaltet vorher die RAM-Disk
-ab (`CDM0`).
+Diagnose für den Multi-Speeder mit drei Tests, einzeln oder zusammen als Burn-In.
 
-Anzeige: 8×8 Bänke (logische Nummern 00-63), grau = offen, gelb revers =
-wird getestet, grün = OK, schwarz revers = FAIL (bleibt über alle Läufe),
-dazu Anzahl fehlerhafter Bytes und der erste Fehler mit Bank, Adresse, Soll
+Menü: MEMORY TEST 512 KB, PARALLEL TEST, MULTI-SPEEDER V3 TEST, BURN-IN (ALL TESTS),
+RUNS (1-99), VERIFY (ON/OFF), DRIVE (8-11, voreingestellt das Laufwerk, von dem das
+Tool geladen wurde), QUIT; Werte mit Cursor links/rechts oder RETURN ändern. RUNS gilt
+für jeden Start: Ein einzelner Test wird so oft wiederholt, der Burn-In führt alle drei
+Tests so oft nacheinander aus. Das Hauptbild zeigt das Laufwerk mit dem Namen seines DOS
+(aus der Einschaltmeldung im ROM, `$E5B7`), die Version der MS-Addon-API, die
+Parallelverbindung (PIA oder VIA1) und je Test das letzte Ergebnis mit bestandenen
+Läufen/Läufen. Ein Start löscht nur die Ergebnisse der Tests, die er ausführt. Nach einer Testreihe bleibt das letzte Bild stehen, bis eine Taste gedrückt
+wird. Speichertest und Multi-Speeder-Test brauchen die MS-Addon-API, sonst `N/A`.
+
+Die Laufwerksroutinen kommen aus `src/drive.s` (`M-E`/`M-R` werden bei
+Übertragungsfehlern bis zu dreimal wiederholt).
+
+**MEMORY TEST 512 KB.** Das Prüfprogramm `src/drv-diag.s` läuft im Laufwerk. Ein Lauf:
+für jedes Muster (`$55`, `$AA`, Adresse = Offset ⊕ Seite ⊕ Bank, Adresse invertiert)
+erst Bank 1-63 füllen, dann alle prüfen – so fallen auch überlagerte Bänke oder Seiten
+auf. Bank 0 (Arbeits-RAM von DolphinDOS) wird am Ende in einem Aufruf getestet und dafür
+in Bank 1 gesichert. Der übrige RAM-Inhalt (CDR-Seiten, RAM-Disk) geht verloren: das Tool
+schaltet vorher die RAM-Disk ab (`CDM0`). Anzeige: 8×8 Bänke (logische Nummern 00-63),
+grau = offen, gelb revers = wird getestet, grün = OK, schwarz revers = FAIL (bleibt über
+alle Läufe), dazu Anzahl fehlerhafter Bytes und der erste Fehler mit Bank, Adresse, Soll
 und Ist. Ein Lauf dauert etwa 2 Minuten.
 
-Menü: START TEST, RUNS (1-99), DRIVE (8-11, voreingestellt das Laufwerk, von
-dem das Tool geladen wurde), QUIT; Werte mit Cursor links/rechts oder RETURN
-ändern. Die Laufwerksroutinen kommen aus `src/drive.s` (`M-E`/`M-R` werden
-bei Übertragungsfehlern bis zu dreimal wiederholt).
+**PARALLEL TEST.** Drei Angaben:
+
+- `INTERFACE`: welcher Baustein das Kabel bedient – PIA 6821 bei `$5000` oder VIA1
+  (DolphinDos26UL, DolphinDos26DD2, Original-DolphinDOS 2.0). Erkennung wie in
+  MS-FASTCOPY (`par_check`).
+- `KERNAL LINK`: Der Kernal setzt in der Sekundäradresse Bit 7 von `$DC0C`, wenn das
+  Laufwerk über das Kabel antwortet – das prüft den ganzen Weg mit den
+  Handshake-Leitungen (Kernal, Kabel, Firmware, `XP+`).
+- `DATA LINES`: Das Laufwerksprogramm `src/drv-par.s` (zwei Fassungen: `-D PIA` und
+  VIA1, ab `$0400`) gibt jedes Byte invertiert zurück; 4 × 256 Werte prüfen alle acht
+  Datenleitungen in beiden Richtungen. Handshake über CLK/DATA wie in `src/drv-fast.s`,
+  ATN bleibt frei. Bei Fehlern: Anzahl und betroffene Bits.
+
+Das Laufwerksprogramm kehrt mit RTS ins DOS zurück (Stapel, Datenrichtung und
+Steuerregister wie beim Start) – kein Reset. Seine Variablen liegen im eigenen Bereich:
+In der Zeropage des DOS stehen bei `$12/$13` die Disketten-ID und davor die Jobs.
+Antwortet der C64 etwa 4 Sekunden nicht, kehrt es von selbst zurück.
+
+**MULTI-SPEEDER V3 TEST.** Vor dem Start ein Hinweis (einmal je Testreihe): Die Diskette
+im Laufwerk wird gelöscht, und alle acht ROM-Bänke müssen ein DOS enthalten – eine leere
+Bank hält das Laufwerk an. Drei Teile:
+
+1. **API:** Kennung `MS`, Version, Anzahl der Einsprünge, jeder Eintrag der Sprungtabelle
+   ist ein `JMP $3xxx`, Aufruf INFO. (ABORT ohne offene Sitzung bleibt aus: es stellt
+   einen nie gesicherten Zustand wieder her.)
+2. **ROM-Bänke:** Durchgang 1 schaltet Bank 1 bis 8 mit `n@RNROM` ein und merkt sich je
+   Bank ein Merkmal (24 Bytes ab `$E5B7` – der Name des DOS – und 8 Bytes ab `$C000`),
+   Durchgang 2 geht von 8 bis 1 und vergleicht. Je Bank bis zu drei Versuche. Zeigen alle
+   Bänke dasselbe Merkmal, ist kein Umschalten nachweisbar (Fehler). Bänke mit gleichem
+   Inhalt kann das Programm nicht unterscheiden. Am Ende zurück in die Startbank: von
+   Bank 8 abwärts umschalten, bis das Merkmal wieder das vom Start ist.
+3. **Diskette** (13 Schritte, BASIC-ROM aus, Dateipuffer `$3B00`-`$CFFF`):
+   `N:MS-DIAG,26+` (40 Spuren, erkannt an mehr als 700 freien Blöcken); vier Dateien zu
+   150 Blöcken und kleine Dateien (10-20 Blöcke), bis weniger als 10 Blöcke frei sind;
+   Seite 2 über die API lesen (OPEN, TRACK 1-40, CLOSE, INFO, SECTOR mit Diskname);
+   `CDR1`, `CDR2` (INFO muss je 40 Spuren melden); `CDM1`, alle Dateien laden und
+   vergleichen, einzeln löschen, Directory leer; `CDM0`, `CDW1`, Diskette leer; `CDW2`,
+   alle Dateien von Diskette laden und vergleichen, einzeln löschen. Der Inhalt jeder
+   Datei ist ein Muster aus Position und Dateinummer, verglichen wird nach dem Laden in
+   den vorher gelöschten Puffer. VERIFY ON/OFF schaltet `XV+`/`XV-`; danach gilt wieder
+   die vorherige Einstellung (aus dem X-Status).
+
+Gemessen wird mit der Uhr des CIA 2 (läuft auch bei gesperrtem Interrupt): Schreib- und
+Lesegeschwindigkeit in Bytes je Sekunde über alle Dateien eines Schritts (nur die Zeit in
+SAVE bzw. LOAD), bei Formatieren, API-Lesen, CDR und CDW die Dauer.
+
+**Eigene Busroutinen im ROM-Teil:** Der ganze ROM-Teil spricht das Laufwerk nicht über den
+KERNAL an, sondern über eigene serielle Routinen, in denen jede Wartestelle eine Zeitgrenze
+hat: `sx_send` (LISTEN, Sekundäradresse 15, Bytes mit EOI, UNLISTEN), `sx_status` (TALK,
+Meldung lesen, UNTALK), `sx_mr` (`M-R`) und `bus_probe` (LISTEN, Sekundäradresse 15,
+UNLISTEN ohne Datenbyte: antwortet das Laufwerk?). Gründe, alle auf echter Hardware
+gefunden:
+
+- Der KERNAL wartet ohne Zeitgrenze, wenn ein Laufwerk DATA zieht, aber nicht antwortet –
+  so ein Laufwerk im Neustart (die Schaltung zieht bei ATN von selbst DATA).
+- Der KERNAL hält ein Laufwerk für ein DolphinDOS mit Parallelkabel, sobald nach der
+  Sekundäradresse ein FLAG-Impuls kommt. Den kann am selben Kabel auch ein anderes DOS
+  auslösen (SpeedDos26 in Bank 3); dann wartet der KERNAL auf eine Parallelübertragung,
+  die nie kommt.
+- Nach `n@RNROM` bleibt der Bus `ROM_WAIT` = 8 Sekunden unberührt (Blinken und Neustart):
+  Abfragen während des Umschaltens stören manches DOS. Danach fragt `bus_probe`, bis das
+  Laufwerk antwortet, und `sx_status` muss die Meldung 73 liefern.
+
+Einzelheiten der Busroutinen:
+
+- Nach LISTEN hält nur das angesprochene Gerät DATA gezogen; ein zweites Laufwerk am Bus
+  stört deshalb nicht. Die Sekundäradresse ist nötig: Ohne gültigen Kanal gibt das DOS
+  nach LISTEN sofort wieder auf (`listen` → `idle`) und lässt DATA los – nach einem
+  Neustart also immer.
+- Bitzeiten beim Senden wie im KERNAL (CLK gezogen etwa 70, frei etwa 30 Mikrosekunden),
+  nicht langsamer: JiffyDOS-Laufwerke werten eine Pause vor dem letzten Bit als Kennung
+  eines JiffyDOS-Rechners.
+- Beim Empfangen wird DATA aus demselben entprellten Lesezugriff genommen, der CLK frei
+  zeigt (wie ACPTR im KERNAL). Ein späterer zweiter Zugriff kommt nach einer Badline zu
+  spät und liest ein falsches Bit.
+- Die Buszugriffe liegen wie beim KERNAL (gleich nach ATN und zweimal nach der Wartezeit):
+  Nachgebildete Geräte in Emulatoren schalten ihren Zustand nur bei Zugriffen weiter.
+
+Scheitert ein Bankwechsel auch im dritten Versuch, steht hinter `FAIL` der Grund:
+`NO ANSWER` (Laufwerk antwortet schon vor dem Befehl nicht), `NO RESTART` (nach dem
+Umschalten keine Antwort), `BUS ERROR` (Übertragung abgebrochen), `MSG nn` (andere
+Meldung als 73, also kein Neustart) oder `CHANGED` (Inhalt anders als beim ersten
+Besuch). Vor jedem Test und nach dem ROM-Teil prüft `bus_probe`, ob das Laufwerk
+antwortet; sonst `DRIVE DOES NOT ANSWER` statt eines KERNAL-Aufrufs, der hängen würde.
+
+Die Tabellen `st`, `fsz` und der Befehlspuffer `cbuf` liegen im Kassettenpuffer
+(`$033C`-`$03FB`), damit das Programm unter dem Dateipuffer Platz hat.
+
+**Sprünge:** Der Aufruf der Tests und Schritte geht über `callvec` im Segment DATA (`JMP`
+mit eingesetztem Ziel), nicht über `JMP (vec)`: der springt beim 6502 falsch, wenn der
+Zeiger an einer Seitengrenze (`$xxFF`) liegt.
 
 ### MS-FASTCOPY
 
@@ -143,7 +241,7 @@ für den Speicher REU ein aktives Parallelkabel, ein DolphinDOS-Kernal (empfohle
 Kopiert eine Diskette in einem Durchgang über das RAM des Multi-Speeders,
 Spur für Spur mit Anzeige (Datenkopie wie `CDR`/`CDW`).
 Benutzt die MS-Addon-API von DolphinDos26 (Sprungtabelle ab `$3FFF`, siehe
-`dd25/README.md`).
+`dd26/README.md`).
 
 Menü zweispaltig wie bei MS-NIBCOPY: links `SETTINGS`, rechts `ACTIONS`.
 CRSR hoch/runter geht durch alle Punkte, CRSR links/rechts ändert eine
